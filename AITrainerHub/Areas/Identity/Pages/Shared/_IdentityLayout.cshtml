@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AITrainersHub</title>
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/users.css" asp-append-version="true" />
+</head>
+<body class="antialiased">
+    <div class="min-h-screen grid md:grid-cols-[45%_55%] bg-black text-white">
+        <div class="flex items-center justify-center p-6 sm:p-8 lg:px-10 bg-black">
+            <div class="w-full max-w-sm">
+                <a asp-area="Users" asp-controller="Home" asp-action="Index" class="flex items-center gap-2.5 mb-8">
+                    <div class="w-8 h-8 rounded-lg bg-white text-black grid place-items-center font-black text-sm">AI</div>
+                    <span class="font-bold tracking-tight text-white">AITrainersHub</span>
+                </a>
+
+                @RenderBody()
+            </div>
+        </div>
+
+        <div class="hidden md:block relative h-full w-full bg-black overflow-hidden">
+            <img src="~/assets/lightning-purple.webp" alt="" class="absolute inset-0 h-full w-full object-cover opacity-90" loading="eager" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+            <div class="absolute bottom-16 left-0 right-0 text-center px-8">
+                <p class="text-sm text-gray-300 max-w-xs mx-auto">
+                    @(ViewData["AuthOverlay"] ?? "Welcome back — your next opportunity is waiting.")
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="usersToast"
+         role="status"
+         aria-live="polite"
+         class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-white text-black px-4 py-2 rounded-full text-sm font-medium hidden"></div>
+
+    <script src="~/js/users.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

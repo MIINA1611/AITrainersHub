@@ -1,0 +1,204 @@
+@{
+    ViewData["Title"] = "AI Training Platforms";
+
+    var features = new[]
+    {
+        new { Title = "Verified Platforms", Description = "Every listing is manually vetted. No scams — only trusted partners like Outlier, Remotasks & Scale AI.", Icon = "i-shield" },
+        new { Title = "Guaranteed Payouts", Description = "Clear payment info for each platform: PayPal, Payoneer, Crypto. Know how and when you get paid.", Icon = "i-dollar" },
+        new { Title = "Community Reviews", Description = "Real 1-5 star ratings from AI trainers. Read reviews before you apply, share your own experience.", Icon = "i-star" },
+        new { Title = "Smart Skill Matching", Description = "Filter by Coding, Writing or Audio. Find tasks that match your exact expertise and language.", Icon = "i-cap" },
+        new { Title = "Global Opportunities", Description = "Remote tasks open worldwide. Filter by region and work from anywhere, anytime.", Icon = "i-globe" },
+        new { Title = "One-Click Apply", Description = "Go straight to the official application with our curated 'Apply Now' links. No middleman, no delay.", Icon = "i-zap" }
+    };
+
+    var platforms = new[]
+    {
+        new { Initials = "OU", Name = "Outlier", Description = "Train cutting-edge AI models with writing & coding tasks.", Categories = new[] { "Writing", "Coding" }, Payment = "PayPal", Status = "Open", Rating = "4.8", Reviews = 124, Url = "https://outlier.ai" },
+        new { Initials = "RE", Name = "Remotasks", Description = "Label data for self-driving cars and AI vision.", Categories = new[] { "Insights" }, Payment = "PayPal", Status = "Open", Rating = "4.3", Reviews = 89, Url = "https://www.remotasks.com" },
+        new { Initials = "SA", Name = "Scale AI", Description = "Advanced model evaluation projects for experienced trainers.", Categories = new[] { "Coding", "Insights" }, Payment = "Bank Transfer", Status = "Soon", Rating = "4.6", Reviews = 67, Url = "https://scale.com" },
+        new { Initials = "AP", Name = "Appen", Description = "Search relevance & ad evaluation from home.", Categories = new[] { "Writing", "Audio" }, Payment = "Payoneer", Status = "Open", Rating = "4.1", Reviews = 203, Url = "https://appen.com" },
+        new { Initials = "TD", Name = "Telus Digital", Description = "AI assistant & search quality rating.", Categories = new[] { "Audio", "Writing" }, Payment = "Bank Transfer", Status = "Closed", Rating = "4.0", Reviews = 54, Url = "https://www.telusdigital.com" },
+        new { Initials = "DA", Name = "DataAnnotation", Description = "Chat & dialogue evaluation for LLMs.", Categories = new[] { "Writing" }, Payment = "PayPal", Status = "Open", Rating = "4.7", Reviews = 98, Url = "https://dataannotation.tech" }
+    };
+}
+
+<svg xmlns="http://www.w3.org/2000/svg" class="hidden" aria-hidden="true">
+    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path>
+        <path d="m9 12 2 2 4-4"></path>
+    </symbol>
+    <symbol id="i-dollar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path>
+        <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path>
+        <path d="M12 18V6"></path>
+    </symbol>
+    <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+    </symbol>
+    <symbol id="i-cap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"></path>
+        <path d="M22 10v6"></path>
+        <path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"></path>
+    </symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+        <path d="M2 12h20"></path>
+    </symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path>
+    </symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14"></path>
+        <path d="m12 5 7 7-7 7"></path>
+    </symbol>
+    <symbol id="i-megaphone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m3 11 18-5v12L3 14v-3z"></path>
+        <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path>
+    </symbol>
+    <symbol id="i-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 3h6v6"></path>
+        <path d="M10 14 21 3"></path>
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+    </symbol>
+</svg>
+
+<div>
+    <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-24 pb-10 text-center">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-gray-400 mb-6">
+            <span class="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span>
+            Trusted by AI Trainers • Community-reviewed
+        </div>
+
+        <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[0.9]">
+            The Best Platforms
+            <br />
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-gray-500">for AI Trainers</span>
+        </h1>
+
+        <p class="mt-6 text-base sm:text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
+            Your complete directory for AI training jobs. Compare Outlier, Remotasks and 120+ platforms — payouts, reviews and live status in one place.
+        </p>
+
+        <div class="mt-8 flex justify-center gap-3">
+            <button type="button"
+                    data-placeholder="Platform exploration is coming soon."
+                    class="inline-flex items-center justify-center gap-2 bg-white text-black hover:bg-gray-100 rounded-full px-7 h-11 text-base font-semibold transition-colors">
+                Explore Platforms
+                <svg class="w-4 h-4" aria-hidden="true"><use href="#i-arrow"></use></svg>
+            </button>
+            <button type="button"
+                    data-placeholder="Platform suggestions are coming soon."
+                    class="hidden sm:inline-flex items-center justify-center rounded-full px-6 h-11 border border-white/10 text-white hover:bg-white/5 transition-colors">
+                Suggest a Platform
+            </button>
+        </div>
+
+        <div class="mt-10 flex justify-center">
+            <div role="tablist" data-users-tabs class="inline-flex items-center gap-1 p-1.5 rounded-full bg-[#0a0a0a] border border-white/10 max-w-full overflow-x-auto">
+                <button type="button" role="tab" aria-selected="true" data-users-tab class="whitespace-nowrap px-5 sm:px-6 py-2 rounded-full text-sm font-medium transition-all bg-white text-black shadow">Insights</button>
+                <button type="button" role="tab" aria-selected="false" data-users-tab class="whitespace-nowrap px-5 sm:px-6 py-2 rounded-full text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5">Coding</button>
+                <button type="button" role="tab" aria-selected="false" data-users-tab class="whitespace-nowrap px-5 sm:px-6 py-2 rounded-full text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5">Writing</button>
+                <button type="button" role="tab" aria-selected="false" data-users-tab class="whitespace-nowrap px-5 sm:px-6 py-2 rounded-full text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5">Audio</button>
+            </div>
+        </div>
+
+        <div class="mt-8 max-w-3xl mx-auto">
+            <div class="flex items-center justify-between gap-3 px-4 py-3 rounded-2xl bg-white/[0.06] border border-dashed border-white/15 text-left">
+                <div class="flex items-center gap-3 min-w-0">
+                    <span class="text-[10px] tracking-widest font-bold bg-white text-black px-2 py-1 rounded-full flex items-center gap-1">
+                        <svg class="w-3 h-3" aria-hidden="true"><use href="#i-megaphone"></use></svg>
+                        AD
+                    </span>
+                    <div class="min-w-0">
+                        <p class="text-sm font-semibold">Feature your platform — 50K+ views</p>
+                        <p class="text-xs text-gray-400">Premium banner from Advertisement API (position=Hero)</p>
+                    </div>
+                </div>
+                <button type="button" data-placeholder="Advertising is coming soon." class="hidden sm:inline-flex items-center justify-center h-9 px-4 rounded-full bg-white text-black text-sm font-medium hover:bg-gray-100 transition-colors">Book now</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 sm:py-24" role="region">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white">Everything you need to get hired</h2>
+                <p class="mt-4 text-lg text-gray-400">We verify, categorize and review so you can focus on training AI — not searching for jobs.</p>
+            </div>
+
+            <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3" role="list">
+                @foreach (var feature in features)
+                {
+                    <article class="flex flex-col h-full p-4 rounded-xl border border-gray-800 bg-black/40 backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:scale-[1.01] hover:border-purple-500/50" role="listitem">
+                        <div class="mb-3 p-2 w-fit inline-flex rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                            <svg class="h-6 w-6" aria-hidden="true"><use href="#@feature.Icon"></use></svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-white">@feature.Title</h3>
+                        <p class="mt-3 text-sm text-gray-400">@feature.Description</p>
+                    </article>
+                }
+            </div>
+        </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-bold">Featured platforms</h3>
+            <button type="button" data-placeholder="The full platform directory is coming soon." class="text-sm text-purple-400 hover:text-purple-300 flex items-center gap-1 transition-colors">
+                View all platforms
+                <svg class="w-4 h-4" aria-hidden="true"><use href="#i-arrow"></use></svg>
+            </button>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            @foreach (var platform in platforms)
+            {
+                var statusClass = platform.Status switch
+                {
+                    "Open" => "border-green-500/20 bg-green-500/10 text-green-400",
+                    "Soon" => "border-amber-500/20 bg-amber-500/10 text-amber-400",
+                    _ => "border-red-500/20 bg-red-500/10 text-red-400"
+                };
+
+                <article class="flex flex-col bg-black/40 border border-white/5 rounded-xl hover:border-purple-500/30 hover:shadow-xl hover:shadow-purple-900/10 transition-all">
+                    <div class="p-4 pb-3">
+                        <div class="flex justify-between items-start gap-2">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#C2402A] to-[#F49D37] grid place-items-center font-black text-white text-sm">@platform.Initials</div>
+                            <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-semibold capitalize @statusClass">@platform.Status</span>
+                        </div>
+                        <h4 class="text-base text-white mt-3 leading-tight line-clamp-1">@platform.Name</h4>
+                        <p class="text-xs text-gray-400 line-clamp-2 min-h-[32px]">@platform.Description</p>
+                    </div>
+
+                    <div class="px-4 pt-0 pb-4 flex flex-col flex-1 gap-3">
+                        <div class="flex flex-wrap gap-1.5">
+                            @foreach (var category in platform.Categories)
+                            {
+                                <span class="inline-flex items-center rounded-full border border-white/5 bg-white/5 px-2.5 py-0.5 text-[11px] font-semibold text-gray-300">@category</span>
+                            }
+                            <span class="inline-flex items-center rounded-full border border-white/10 px-2.5 py-0.5 text-[11px] font-semibold text-gray-400">@platform.Payment</span>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-3 mt-auto border-t border-white/5">
+                            <span class="flex items-center gap-1 text-sm font-semibold text-amber-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3.5 h-3.5 fill-amber-400 text-amber-400" aria-hidden="true">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                </svg>
+                                @platform.Rating
+                                <span class="text-gray-500 font-normal text-xs">(@platform.Reviews)</span>
+                            </span>
+                            <div class="flex gap-1.5">
+                                <button type="button" data-placeholder="Platform details are coming soon." class="inline-flex items-center justify-center h-7 px-3 rounded-md text-xs font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors">Details</button>
+                                <a href="@platform.Url" target="_blank" rel="noreferrer" class="inline-flex items-center justify-center gap-1 h-7 px-3 rounded-md text-xs font-semibold bg-white text-black hover:bg-gray-100 transition-colors">
+                                    Apply
+                                    <svg class="w-3 h-3" aria-hidden="true"><use href="#i-external"></use></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+    </section>
+</div>

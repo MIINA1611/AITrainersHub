@@ -1,0 +1,111 @@
+@using Microsoft.AspNetCore.Identity
+@using AITrainersHub.Domain.Models
+@using MediatR
+@using AITrainersHub.Application.Features.PlatformSuggestion.Queries
+@using AITrainersHub.Application.Features.Review.Queries
+@using AITrainersHub.Application.Features.VideoGuide.Queries
+@using AITrainersHub.Application.Features.WorkOpportunity.Queries
+@inject UserManager<ApplicationUser> UserManager
+@inject IMediator Mediator
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+    var displayName = currentUser?.DisplayName ?? User.Identity?.Name ?? "Guest";
+    var email = currentUser?.Email ?? string.Empty;
+    var role = User.IsInRole("Admin") ? "Admin" : User.IsInRole("Leader") ? "Leader" : "Guest";
+
+    ViewData["AdminDisplayName"] = displayName;
+    ViewData["AdminEmail"] = email;
+    ViewData["AdminRole"] = role;
+
+    var pendingSuggestions = await Mediator.Send(new ReadPlatformSuggestionsQuery(false));
+    var pendingVideoGuides = await Mediator.Send(new ReadPendingVideoGuidesQuery());
+    var pendingReviews = await Mediator.Send(new ReadPendingReviewsQuery());
+    var pendingOpportunities = await Mediator.Send(new ReadPendingWorkOpportunitiesQuery());
+
+    ViewData["PendingTotal"] =
+        pendingSuggestions.Count +
+        pendingVideoGuides.Count +
+        pendingReviews.Count +
+        pendingOpportunities.Count;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AITrainerHub Admin</title>
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin-custom.css" asp-append-version="true" />
+</head>
+<body class="antialiased">
+    <div class="min-h-screen bg-gradient-to-b from-black via-black to-[#2b1055] text-white flex">
+        <!-- Desktop sidebar -->
+        <aside class="hidden lg:flex w-64 shrink-0 bg-black/40 border-r border-white/5 flex-col sticky top-0 h-screen">
+            <partial name="_AdminSidebar" />
+        </aside>
+
+        <!-- Mobile drawer -->
+        <div id="adminDrawer" class="fixed inset-0 z-50 lg:hidden hidden">
+            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-admin-drawer-close></div>
+            <div class="absolute left-0 top-0 bottom-0 w-64 bg-[#0a0a0a] border-r border-white/10">
+                <partial name="_AdminSidebar" />
+            </div>
+        </div>
+
+        <div class="flex-1 flex flex-col min-w-0">
+            <!-- Top bar -->
+            <header class="h-14 flex items-center gap-3 px-4 sm:px-6 border-b border-white/5 bg-black/40 backdrop-blur-xl sticky top-0 z-30">
+                <button type="button"
+                        id="adminDrawerToggle"
+                        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 hover:bg-white/5 text-gray-400 hover:text-white h-9 w-9 lg:hidden"
+                        aria-label="Toggle navigation"
+                        aria-controls="adminDrawer"
+                        aria-expanded="false">
+                    <svg id="adminMenuIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5" aria-hidden="true">
+                        <line x1="4" x2="20" y1="12" y2="12"></line>
+                        <line x1="4" x2="20" y1="6" y2="6"></line>
+                        <line x1="4" x2="20" y1="18" y2="18"></line>
+                    </svg>
+                    <svg id="adminCloseIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 hidden" aria-hidden="true">
+                        <path d="M18 6 6 18"></path>
+                        <path d="m6 6 12 12"></path>
+                    </svg>
+                </button>
+
+                <h1 class="font-semibold truncate">@(ViewData["Title"] ?? "Admin Dashboard")</h1>
+
+                <div class="ml-auto hidden sm:flex items-center gap-2 text-sm text-gray-400">
+                    <span>@displayName</span>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <span class="w-1 h-1 rounded-full bg-white/20"></span>
+                        <span class="text-purple-400">@role</span>
+                    }
+                </div>
+            </header>
+
+            <main class="flex-1 p-4 sm:p-6 lg:p-8 overflow-auto">
+                @if (TempData["Error"] is string errorMessage && !string.IsNullOrWhiteSpace(errorMessage))
+                {
+                    <div class="admin-alert admin-alert--error admin-alert--page" role="alert">
+                        @errorMessage
+                    </div>
+                }
+
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <div id="adminToast"
+         role="status"
+         aria-live="polite"
+         data-message="@(TempData["Success"])"
+         class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white text-black px-4 py-2 rounded-full text-sm font-medium hidden"></div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @await Html.PartialAsync("~/Views/Shared/_ValidationScriptsPartial.cshtml")
+    <script src="~/js/admin.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

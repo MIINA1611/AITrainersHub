@@ -1,0 +1,31 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Something went wrong - AITrainersHub</title>
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/users.css" asp-append-version="true" />
+</head>
+<body class="antialiased">
+    <div class="min-h-screen bg-gradient-to-b from-black via-black to-[#2b1055] text-white grid place-items-center px-4">
+        <div class="max-w-md w-full text-center rounded-2xl border border-white/10 bg-black/40 p-8">
+            <div class="mx-auto w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 grid place-items-center text-red-400">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5" aria-hidden="true">
+                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path>
+                    <path d="M12 9v4"></path>
+                    <path d="M12 17h.01"></path>
+                </svg>
+            </div>
+
+            <h1 class="text-2xl font-bold mt-4">Something went wrong</h1>
+            <p class="text-sm text-gray-400 mt-2">An unexpected error occurred. Please try again, or head back to the directory.</p>
+
+            <a asp-area="Users" asp-controller="Home" asp-action="Index" class="auth-btn mt-6">Back to home</a>
+        </div>
+    </div>
+</body>
+</html>

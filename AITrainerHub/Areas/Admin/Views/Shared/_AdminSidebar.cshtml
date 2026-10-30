@@ -1,0 +1,127 @@
+@using Microsoft.AspNetCore.Identity
+@using AITrainersHub.Domain.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
+
+    bool IsActive(params string[] controllers) =>
+        controllers.Any(controller => string.Equals(controller, currentController, StringComparison.OrdinalIgnoreCase));
+
+    var isDashboardActive = IsActive("Dashboard");
+    var isModerationActive = IsActive("Moderation");
+    var isPlatformsActive = IsActive("Platform");
+    var isReferenceActive = IsActive("Categories", "ReferenceData");
+    var isAdvertisementsActive = IsActive("Advertisements");
+    var isLeadersActive = IsActive("Leaders");
+
+    var pendingTotal = ViewData["PendingTotal"] is int total ? total : 0;
+
+    var displayName = ViewData["AdminDisplayName"] as string ?? "Guest";
+    var email = ViewData["AdminEmail"] as string ?? string.Empty;
+
+    string LinkClass(bool active) => active
+        ? "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors bg-white text-black"
+        : "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-400 hover:text-white hover:bg-white/5";
+
+    const string GhostButtonClass = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 hover:bg-white/5 text-gray-400 hover:text-white h-8 px-3 text-xs w-full mt-3 justify-start";
+}
+
+<div class="flex flex-col h-full">
+    <div class="p-4 border-b border-white/5">
+        <div class="flex items-center gap-2 font-bold">
+            <div class="w-8 h-8 rounded-lg bg-white text-black grid place-items-center font-black text-sm">AI</div>
+            <span>Admin</span>
+            <span class="ml-auto text-xs bg-purple-600 text-white px-2 py-0.5 rounded-full">Private</span>
+        </div>
+    </div>
+
+    <nav class="flex-1 p-3 space-y-1 overflow-auto">
+        <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="@LinkClass(isDashboardActive)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
+                <rect width="7" height="9" x="3" y="3" rx="1"></rect>
+                <rect width="7" height="5" x="14" y="3" rx="1"></rect>
+                <rect width="7" height="9" x="14" y="12" rx="1"></rect>
+                <rect width="7" height="5" x="3" y="16" rx="1"></rect>
+            </svg>
+            Dashboard
+        </a>
+
+        <a asp-area="Admin" asp-controller="Moderation" asp-action="Index" class="@LinkClass(isModerationActive)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
+                <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path>
+                <path d="m9 12 2 2 4-4"></path>
+            </svg>
+            <span>Moderation Queue</span>
+            @if (pendingTotal > 0)
+            {
+                <span class="admin-badge admin-badge--purple admin-nav-badge">@pendingTotal</span>
+            }
+        </a>
+
+        <a asp-area="Admin" asp-controller="Platform" asp-action="Index" class="@LinkClass(isPlatformsActive)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
+                <path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"></path>
+                <path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"></path>
+                <path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"></path>
+            </svg>
+            Platforms
+        </a>
+
+        <a asp-area="Admin" asp-controller="Categories" asp-action="Index" class="@LinkClass(isReferenceActive)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
+                <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                <path d="M3 5V19A9 3 0 0 0 21 19V5"></path>
+                <path d="M3 12A9 3 0 0 0 21 12"></path>
+            </svg>
+            Reference Data
+        </a>
+
+        <a asp-area="Admin" asp-controller="Advertisements" asp-action="Index" class="@LinkClass(isAdvertisementsActive)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
+                <path d="m3 11 18-5v12L3 14v-3z"></path>
+                <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path>
+            </svg>
+            Advertisements
+        </a>
+
+        <a asp-area="Admin" asp-controller="Leaders" asp-action="Index" class="@LinkClass(isLeadersActive)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            Leaders
+        </a>
+    </nav>
+
+    <div class="p-3 border-t border-white/5">
+        <div class="text-sm">
+            <p class="font-medium text-white">@displayName</p>
+            @if (!string.IsNullOrWhiteSpace(email))
+            {
+                <p class="text-xs text-gray-500">@email</p>
+            }
+        </div>
+
+        @if (SignInManager.IsSignedIn(User))
+        {
+            <form method="post" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Dashboard", new { area = "Admin" })">
+                <button type="submit" class="@GhostButtonClass">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-2" aria-hidden="true">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" x2="9" y1="12" y2="12"></line>
+                    </svg>
+                    Sign out
+                </button>
+            </form>
+        }
+        else
+        {
+            <a asp-area="Identity" asp-page="/Account/Login" class="@GhostButtonClass">
+                Sign in
+            </a>
+        }
+    </div>
+</div>

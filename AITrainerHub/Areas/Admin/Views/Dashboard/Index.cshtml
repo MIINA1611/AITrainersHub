@@ -1,0 +1,62 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Overview";
+}
+
+<div class="admin-page-header">
+    <div>
+        <h2 class="admin-page-title">Overview</h2>
+        <p class="admin-page-subtitle">A quick snapshot of moderation and platform activity.</p>
+    </div>
+
+    <div class="admin-page-actions">
+        <a asp-area="Admin" asp-controller="Moderation" asp-action="Index" class="admin-btn admin-btn--ghost">
+            Open Moderation Queue
+        </a>
+    </div>
+</div>
+
+@if (Model.TotalPending > 0)
+{
+    <div class="admin-alert admin-alert--info admin-alert--page" role="status">
+        @Model.TotalPending item@(Model.TotalPending == 1 ? "" : "s") currently need@(Model.TotalPending == 1 ? "s" : "") your attention.
+    </div>
+}
+
+<div class="admin-grid admin-grid--cards">
+    <a asp-area="Admin" asp-controller="Moderation" asp-action="Index" asp-route-tab="suggestions" class="admin-stat">
+        <span class="admin-stat__label">Pending Suggestions</span>
+        <span class="admin-stat__value">@Model.PendingSuggestions</span>
+        <span class="admin-stat__hint">Platform suggestions waiting for review</span>
+    </a>
+
+    <a asp-area="Admin" asp-controller="Moderation" asp-action="Index" asp-route-tab="video-guides" class="admin-stat">
+        <span class="admin-stat__label">Pending Video Guides</span>
+        <span class="admin-stat__value">@Model.PendingVideoGuides</span>
+        <span class="admin-stat__hint">Video guides waiting for approval</span>
+    </a>
+
+    <a asp-area="Admin" asp-controller="Moderation" asp-action="Index" asp-route-tab="reviews" class="admin-stat">
+        <span class="admin-stat__label">Pending Reviews</span>
+        <span class="admin-stat__value">@Model.PendingReviews</span>
+        <span class="admin-stat__hint">Visitor reviews waiting for approval</span>
+    </a>
+
+    <a asp-area="Admin" asp-controller="Leaders" asp-action="Index" class="admin-stat">
+        <span class="admin-stat__label">Total Leaders</span>
+        <span class="admin-stat__value">@Model.TotalLeaders</span>
+        <span class="admin-stat__hint">Leader accounts registered on the platform</span>
+    </a>
+
+    <a asp-area="Admin" asp-controller="Platform" asp-action="Index" asp-route-status="Open" class="admin-stat">
+        <span class="admin-stat__label">Total Live Platforms</span>
+        <span class="admin-stat__value">@Model.TotalLivePlatforms</span>
+        <span class="admin-stat__hint">Platforms currently marked as Open</span>
+    </a>
+
+    <a asp-area="Admin" asp-controller="Moderation" asp-action="Index" asp-route-tab="opportunities" class="admin-stat">
+        <span class="admin-stat__label">Pending Opportunities</span>
+        <span class="admin-stat__value">@Model.PendingOpportunities</span>
+        <span class="admin-stat__hint">Work opportunities waiting for approval</span>
+    </a>
+</div>

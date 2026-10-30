@@ -1,0 +1,116 @@
+@model CountriesViewModel
+@{
+    ViewData["Title"] = "Reference Data";
+    ViewData["ReferenceTab"] = "countries";
+}
+
+<div class="admin-page-header">
+    <div>
+        <h2 class="admin-page-title">Reference Data</h2>
+        <p class="admin-page-subtitle">Manage the categories, payment methods, and countries used across the platform catalog.</p>
+    </div>
+</div>
+
+<partial name="_ReferenceDataTabs" />
+
+<div class="admin-card">
+    <div class="admin-card__header">
+        <div>
+            <h3 class="admin-card__title">Countries</h3>
+            <p class="admin-card__subtitle">Country names and ISO codes available for platform availability.</p>
+        </div>
+
+        <form asp-area="Admin" asp-controller="ReferenceData" asp-action="CreateCountry" method="post" asp-antiforgery="true" class="admin-inline-form">
+            <input name="NameAr" class="admin-input admin-input--sm" placeholder="الاسم بالعربية" maxlength="100" required dir="rtl" autocomplete="off" />
+            <input name="NameEn" class="admin-input admin-input--sm" placeholder="English name" maxlength="100" required autocomplete="off" />
+            <input name="IsoCode" class="admin-input admin-input--sm admin-ltr" placeholder="ISO" minlength="2" maxlength="2" required style="max-width: 5.5rem;" autocomplete="off" />
+            <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Add</button>
+        </form>
+    </div>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <colgroup>
+                <col style="width: 32%" />
+                <col style="width: 30%" />
+                <col style="width: 10%" />
+                <col style="width: 28%" />
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Country (English)</th>
+                    <th>Country (Arabic)</th>
+                    <th>Code</th>
+                    <th class="col-actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items.Count == 0)
+                {
+                    <tr>
+                        <td colspan="4" class="admin-empty">No countries yet. Use the form above to add the first one.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var country in Model.Items)
+                    {
+                        <tr>
+                            <td><span class="admin-cell-title">@country.NameEn</span></td>
+                            <td dir="rtl">@country.NameAr</td>
+                            <td><span class="admin-ltr">@country.IsoCode</span></td>
+                            <td class="col-actions">
+                                <div class="cell-actions">
+                                    <button type="button"
+                                            class="admin-btn admin-btn--ghost admin-btn--sm"
+                                            data-country-edit
+                                            data-id="@country.Id"
+                                            data-name-ar="@country.NameAr"
+                                            data-name-en="@country.NameEn"
+                                            data-iso-code="@country.IsoCode">
+                                        Edit
+                                    </button>
+                                    <form asp-area="Admin" asp-controller="ReferenceData" asp-action="DeleteCountry" method="post" asp-antiforgery="true" data-confirm="Delete this country? Platforms linked to it will lose the link.">
+                                        <input type="hidden" name="id" value="@country.Id" />
+                                        <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="countryEditModal" class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="countryEditTitle">
+    <div class="admin-modal__dialog">
+        <h3 id="countryEditTitle" class="admin-modal__title">Edit country</h3>
+        <p class="admin-modal__copy">Update the country names and ISO code.</p>
+
+        <form asp-area="Admin" asp-controller="ReferenceData" asp-action="UpdateCountry" method="post" asp-antiforgery="true" class="admin-form" data-submit-once>
+            <input type="hidden" name="Id" id="CountryEdit_Id" />
+
+            <div class="admin-field">
+                <label class="admin-label" for="CountryEdit_NameEn">English name</label>
+                <input name="NameEn" id="CountryEdit_NameEn" class="admin-input" maxlength="100" required autocomplete="off" />
+            </div>
+
+            <div class="admin-field">
+                <label class="admin-label" for="CountryEdit_NameAr">Arabic name</label>
+                <input name="NameAr" id="CountryEdit_NameAr" class="admin-input" maxlength="100" required dir="rtl" autocomplete="off" />
+            </div>
+
+            <div class="admin-field" style="max-width: 10rem;">
+                <label class="admin-label" for="CountryEdit_IsoCode">ISO code</label>
+                <input name="IsoCode" id="CountryEdit_IsoCode" class="admin-input admin-ltr" minlength="2" maxlength="2" required autocomplete="off" />
+            </div>
+
+            <div class="admin-modal__footer">
+                <button type="button" class="admin-btn admin-btn--ghost" data-admin-modal-close="#countryEditModal">Cancel</button>
+                <button type="submit" class="admin-btn admin-btn--primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>

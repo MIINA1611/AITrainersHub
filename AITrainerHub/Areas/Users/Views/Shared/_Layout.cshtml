@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AITrainersHub</title>
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/users.css" asp-append-version="true" />
+</head>
+<body class="antialiased">
+    <div class="min-h-screen bg-gradient-to-b from-black via-black to-[#2b1055] text-white flex flex-col selection:bg-purple-500/30 overflow-x-hidden">
+        <partial name="~/Areas/Users/Views/Shared/_Navbar.cshtml" />
+        <partial name="~/Areas/Users/Views/Shared/_Sidebar.cshtml" />
+
+        <main class="flex-1">
+            @RenderBody()
+        </main>
+
+        <partial name="~/Areas/Users/Views/Shared/_Footer.cshtml" />
+    </div>
+
+    <div id="usersToast"
+         role="status"
+         aria-live="polite"
+         class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-white text-black px-4 py-2 rounded-full text-sm font-medium hidden"></div>
+
+    <script src="~/js/users.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

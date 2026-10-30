@@ -1,0 +1,89 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+    <PackageReference Include="huzcodes.Extensions" Version="1.3.0" />
+    <PackageReference Include="MediatR" Version="12.5.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.32" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="9.0.19" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\Advertisement\Commands\" />
+    <Folder Include="Features\Advertisement\Handlers\CommandsHandlers\" />
+    <Folder Include="Features\Advertisement\Handlers\QueriesHandlers\" />
+    <Folder Include="Features\Advertisement\Queries\" />
+    <Folder Include="Features\Advertisement\Validators\" />
+    <Folder Include="Features\Categories\Queries\" />
+    <Folder Include="Features\Country\Commands\" />
+    <Folder Include="Features\Country\Handlers\CommandsHandlers\" />
+    <Folder Include="Features\Country\Handlers\QueriesHandlers\" />
+    <Folder Include="Features\Country\Queries\" />
+    <Folder Include="Features\Country\Validators\" />
+    <Folder Include="Features\OnboardingStep\Commands\" />
+    <Folder Include="Features\OnboardingStep\Handlers\CommandsHandlers\" />
+    <Folder Include="Features\OnboardingStep\Handlers\QueriesHandlers\" />
+    <Folder Include="Features\OnboardingStep\Queries\" />
+    <Folder Include="Features\OnboardingStep\Validators\" />
+    <Folder Include="Features\PaymentMethod\Commands\" />
+    <Folder Include="Features\PaymentMethod\Handlers\CommandsHandlers\" />
+    <Folder Include="Features\PaymentMethod\Handlers\QueriesHandlers\" />
+    <Folder Include="Features\PaymentMethod\Queries\" />
+    <Folder Include="Features\PaymentMethod\Validators\" />
+    <Folder Include="Features\PlatformCategory\Commands\" />
+    <Folder Include="Features\PlatformCategory\Handlers\CommandsHandlers\" />
+    <Folder Include="Features\PlatformCategory\Handlers\QueriesHandlers\" />
+    <Folder Include="Features\PlatformCategory\Queries\" />
+    <Folder Include="Features\PlatformCategory\Validators\" />
+    <Folder Include="Features\PlatformCountry\Commands\" />
+    <Folder Include="Features\PlatformCountry\Handlers\CommandsHandlers\" />
+    <Folder Include="Features\PlatformCountry\Handlers\QueriesHandlers\" />
+    <Folder Include="Features\PlatformCountry\Queries\" />
+    <Folder Include="Features\PlatformCountry\Validators\" />
+    <Folder Include="Features\PlatformPaymentMethod\Commands\" />
+    <Folder Include="Features\PlatformPaymentMethod\Handlers\CommandsHandlers\" />
+    <Folder Include="Features\PlatformPaymentMethod\Handlers\QueriesHandlers\" />
+    <Folder Include="Features\PlatformPaymentMethod\Queries\" />
+    <Folder Include="Features\PlatformPaymentMethod\Validators\" />
+    <Folder Include="Features\PlatformSuggestion\Commands\" />
+    <Folder Include="Features\PlatformSuggestion\Handlers\CommandsHandlers\" />
+    <Folder Include="Features\PlatformSuggestion\Handlers\QueriesHandlers\" />
+    <Folder Include="Features\PlatformSuggestion\Queries\" />
+    <Folder Include="Features\PlatformSuggestion\Validators\" />
+    <Folder Include="Features\Platform\Commands\" />
+    <Folder Include="Features\Platform\Validators\" />
+    <Folder Include="Features\Review\Commands\" />
+    <Folder Include="Features\Review\Handlers\CommandsHandlers\" />
+    <Folder Include="Features\Review\Handlers\QueriesHandlers\" />
+    <Folder Include="Features\Review\Queries\" />
+    <Folder Include="Features\Review\Validators\" />
+    <Folder Include="Features\VideoGuide\Commands\" />
+    <Folder Include="Features\VideoGuide\Handlers\CommandsHandlers\" />
+    <Folder Include="Features\VideoGuide\Handlers\QueriesHandlers\" />
+    <Folder Include="Features\VideoGuide\Queries\" />
+    <Folder Include="Features\VideoGuide\Validators\" />
+    <Folder Include="Features\Platform\Handlers\CommandsHandlers\" />
+    <Folder Include="Features\Platform\Handlers\QueriesHandlers\" />
+    <Folder Include="Features\Platform\Queries\" />
+    <Folder Include="Features\WorkOpportunity\Commands\" />
+    <Folder Include="Features\WorkOpportunity\Handlers\CommandsHandlers\" />
+    <Folder Include="Features\WorkOpportunity\Handlers\QueriesHandlers\" />
+    <Folder Include="Features\WorkOpportunity\Queries\" />
+    <Folder Include="Features\WorkOpportunity\Validators\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AITrainersHub.Domain\AITrainersHub.Domain.csproj" />
+  </ItemGroup>
+		<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+</Project>

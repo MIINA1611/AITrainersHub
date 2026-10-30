@@ -1,0 +1,61 @@
+@model AdvertisementFormRequest
+
+<div asp-validation-summary="All" class="validation-summary-errors"></div>
+
+<div class="admin-field">
+    <label asp-for="Title" class="admin-label">Title</label>
+    <input asp-for="Title" class="admin-input" placeholder="e.g. Start earning today" autocomplete="off" />
+    <span asp-validation-for="Title" class="field-validation-error"></span>
+</div>
+
+<div class="admin-field">
+    <label asp-for="Subtitle" class="admin-label">Subtitle (optional)</label>
+    <input asp-for="Subtitle" class="admin-input" placeholder="Short supporting line" autocomplete="off" />
+    <span asp-validation-for="Subtitle" class="field-validation-error"></span>
+</div>
+
+<div class="admin-grid admin-grid--2">
+    <div class="admin-field">
+        <label asp-for="CtaText" class="admin-label">Call-to-action text</label>
+        <input asp-for="CtaText" class="admin-input" placeholder="Book now" autocomplete="off" />
+        <span asp-validation-for="CtaText" class="field-validation-error"></span>
+    </div>
+
+    <div class="admin-field">
+        <label asp-for="CtaUrl" class="admin-label">Call-to-action URL</label>
+        <input asp-for="CtaUrl" class="admin-input admin-ltr" placeholder="https://example.com/offer" autocomplete="off" />
+        <span asp-validation-for="CtaUrl" class="field-validation-error"></span>
+    </div>
+</div>
+
+<div class="admin-grid admin-grid--3">
+    <div class="admin-field">
+        <label asp-for="Position" class="admin-label">Position</label>
+        <input asp-for="Position" class="admin-input" list="advertisement-positions" placeholder="Hero" autocomplete="off" />
+        <datalist id="advertisement-positions">
+            <option value="Hero"></option>
+            <option value="Banner"></option>
+            <option value="Sidebar"></option>
+            <option value="Popup"></option>
+            <option value="Footer"></option>
+        </datalist>
+        <span asp-validation-for="Position" class="field-validation-error"></span>
+    </div>
+
+    <div class="admin-field">
+        <label asp-for="StartDate" class="admin-label">Start date (optional)</label>
+        <input asp-for="StartDate" type="date" asp-format="{0:yyyy-MM-dd}" class="admin-input" />
+        <span asp-validation-for="StartDate" class="field-validation-error"></span>
+    </div>
+
+    <div class="admin-field">
+        <label asp-for="EndDate" class="admin-label">End date (optional)</label>
+        <input asp-for="EndDate" type="date" asp-format="{0:yyyy-MM-dd}" class="admin-input" />
+        <span asp-validation-for="EndDate" class="field-validation-error"></span>
+    </div>
+</div>
+
+<label class="admin-check">
+    <input asp-for="IsActive" />
+    Active — visible on the public site
+</label>

@@ -1,0 +1,117 @@
+@model List<AdvertisementDto>
+@{
+    ViewData["Title"] = "Advertisements";
+
+    string Schedule(AdvertisementDto advertisement)
+    {
+        if (!advertisement.StartDate.HasValue && !advertisement.EndDate.HasValue)
+        {
+            return "Always";
+        }
+
+        var start = advertisement.StartDate?.ToString("yyyy-MM-dd") ?? "—";
+        var end = advertisement.EndDate?.ToString("yyyy-MM-dd") ?? "—";
+        return $"{start} → {end}";
+    }
+}
+
+<div class="admin-page-header">
+    <div>
+        <h2 class="admin-page-title">Advertisements</h2>
+        <p class="admin-page-subtitle">Create promotional banners, control their schedule, and toggle them live.</p>
+    </div>
+
+    <div class="admin-page-actions">
+        <a asp-area="Admin" asp-controller="Advertisements" asp-action="Create" class="admin-btn admin-btn--primary">Add Advertisement</a>
+    </div>
+</div>
+
+<div class="admin-card">
+    <div class="admin-card__header">
+        <div>
+            <h3 class="admin-card__title">All Advertisements</h3>
+            <p class="admin-card__subtitle">Use the switch to activate or deactivate an advertisement immediately.</p>
+        </div>
+        <span class="admin-badge admin-badge--purple">@Model.Count total</span>
+    </div>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table admin-table--xwide">
+            <colgroup>
+                <col style="width: 22%" />
+                <col style="width: 10%" />
+                <col style="width: 19%" />
+                <col style="width: 17%" />
+                <col style="width: 11%" />
+                <col style="width: 21%" />
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Position</th>
+                    <th>Call To Action</th>
+                    <th>Schedule</th>
+                    <th>Status</th>
+                    <th class="col-actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Count == 0)
+                {
+                    <tr>
+                        <td colspan="6" class="admin-empty">No advertisements yet. Add the first one to get started.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var advertisement in Model)
+                    {
+                        <tr>
+                            <td>
+                                <span class="admin-cell-title">@advertisement.Title</span>
+                                @if (!string.IsNullOrWhiteSpace(advertisement.Subtitle))
+                                {
+                                    <span class="admin-cell-sub">@advertisement.Subtitle</span>
+                                }
+                            </td>
+                            <td>@advertisement.Position</td>
+                            <td>
+                                <span class="admin-cell-title">@advertisement.CtaText</span>
+                                <span class="admin-cell-sub"><span class="admin-ltr">@advertisement.CtaUrl</span></span>
+                            </td>
+                            <td>@Schedule(advertisement)</td>
+                            <td>
+                                <div class="admin-actions">
+                                    <form asp-area="Admin" asp-controller="Advertisements" asp-action="ToggleActive" method="post" asp-antiforgery="true" class="admin-inline-form">
+                                        <input type="hidden" name="id" value="@advertisement.Id" />
+                                        <label class="admin-switch" title="@(advertisement.IsActive ? "Deactivate advertisement" : "Activate advertisement")">
+                                            <input type="checkbox" checked="@advertisement.IsActive" data-auto-submit aria-label="Toggle advertisement active state" />
+                                            <span class="admin-switch__track"></span>
+                                        </label>
+                                    </form>
+                                    @if (advertisement.IsActive)
+                                    {
+                                        <span class="admin-badge admin-badge--green">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="admin-badge admin-badge--gray">Inactive</span>
+                                    }
+                                </div>
+                            </td>
+                            <td class="col-actions">
+                                <div class="cell-actions">
+                                    <a asp-area="Admin" asp-controller="Advertisements" asp-action="Edit" asp-route-id="@advertisement.Id" class="admin-btn admin-btn--ghost admin-btn--sm">Edit</a>
+                                    <form asp-area="Admin" asp-controller="Advertisements" asp-action="Delete" method="post" asp-antiforgery="true" data-confirm="Delete this advertisement permanently?">
+                                        <input type="hidden" name="id" value="@advertisement.Id" />
+                                        <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

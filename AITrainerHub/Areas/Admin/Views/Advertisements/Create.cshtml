@@ -1,0 +1,28 @@
+@model AdvertisementFormRequest
+@{
+    ViewData["Title"] = "Add Advertisement";
+}
+
+<div class="admin-page-header">
+    <div>
+        <h2 class="admin-page-title">Add Advertisement</h2>
+        <p class="admin-page-subtitle">Set the copy, call to action, placement, and schedule for the new advertisement.</p>
+    </div>
+
+    <div class="admin-page-actions">
+        <a asp-area="Admin" asp-controller="Advertisements" asp-action="Index" class="admin-btn admin-btn--ghost">Back to Advertisements</a>
+    </div>
+</div>
+
+<div class="admin-card" style="max-width: 62rem;">
+    <div class="admin-card__body">
+        <form asp-area="Admin" asp-controller="Advertisements" asp-action="Create" method="post" asp-antiforgery="true" class="admin-form" data-submit-once>
+            <partial name="_AdvertisementFields" model="Model" />
+
+            <div class="admin-actions">
+                <button type="submit" class="admin-btn admin-btn--primary">Create Advertisement</button>
+                <a asp-area="Admin" asp-controller="Advertisements" asp-action="Index" class="admin-btn admin-btn--ghost">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

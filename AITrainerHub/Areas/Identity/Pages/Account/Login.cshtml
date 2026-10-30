@@ -1,0 +1,66 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Sign in";
+    ViewData["AuthOverlay"] = "Welcome back — your next opportunity is waiting.";
+}
+
+<div class="space-y-6">
+    <div>
+        <h1 class="auth-h1">Sign in to your account</h1>
+        <p class="auth-sub">Enter your email below to sign in</p>
+    </div>
+
+    <div asp-validation-summary="ModelOnly" class="auth-alert" role="alert"></div>
+
+    <form id="account" method="post" class="space-y-4">
+        <div>
+            <label asp-for="Input.Email" class="auth-label">Email</label>
+            <input asp-for="Input.Email" class="auth-input" autocomplete="username" aria-required="true" placeholder="m@example.com" />
+            <span asp-validation-for="Input.Email" class="auth-error"></span>
+        </div>
+
+        <div>
+            <div class="flex items-center justify-between mb-2">
+                <label asp-for="Input.Password" class="auth-label mb-0">Password</label>
+                <a id="forgot-password" asp-page="./ForgotPassword" class="auth-link text-xs">Forgot password?</a>
+            </div>
+            <div class="relative">
+                <input asp-for="Input.Password" class="auth-input pr-10" autocomplete="current-password" aria-required="true" placeholder="Password" />
+                <button type="button"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
+                        data-password-toggle="Input_Password"
+                        aria-label="Show password">
+                    <svg data-eye-open xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
+                        <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <svg data-eye-off xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 hidden" aria-hidden="true">
+                        <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"></path>
+                        <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"></path>
+                        <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"></path>
+                        <path d="m2 2 20 20"></path>
+                    </svg>
+                </button>
+            </div>
+            <span asp-validation-for="Input.Password" class="auth-error"></span>
+        </div>
+
+        <div class="auth-check">
+            <input asp-for="Input.RememberMe" />
+            <label asp-for="Input.RememberMe">@Html.DisplayNameFor(m => m.Input.RememberMe)</label>
+        </div>
+
+        <button id="login-submit" type="submit" class="auth-btn">Sign In</button>
+    </form>
+
+    <p class="text-center text-sm text-gray-400">
+        Don't have an account?
+        <button type="button" data-placeholder="Registration is not available yet." class="auth-link">Sign up</button>
+    </p>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

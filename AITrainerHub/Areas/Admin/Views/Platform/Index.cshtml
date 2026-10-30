@@ -1,0 +1,165 @@
+@model PlatformsIndexViewModel
+@{
+    ViewData["Title"] = "Platforms";
+}
+
+<div class="admin-page-header">
+    <div>
+        <h2 class="admin-page-title">Platforms</h2>
+        <p class="admin-page-subtitle">Manage platforms, their availability, and every linked reference record.</p>
+    </div>
+
+    <div class="admin-page-actions">
+        <a asp-area="Admin" asp-controller="Platform" asp-action="Create" class="admin-btn admin-btn--primary">
+            Add Platform
+        </a>
+    </div>
+</div>
+
+<div class="admin-card">
+    <div class="admin-card__header">
+        <form asp-area="Admin" asp-controller="Platform" asp-action="Index" method="get" class="admin-toolbar">
+            <input type="search"
+                   name="search"
+                   value="@Model.Search"
+                   class="admin-input admin-input--search"
+                   placeholder="Search by name or slug"
+                   autocomplete="off"
+                   data-live-search />
+
+            <select name="status" class="admin-select admin-select--sm" data-auto-submit>
+                <option value="">All statuses</option>
+                @foreach (var statusOption in Enum.GetValues<PlatformStatus>())
+                {
+                    if (Model.Status == statusOption)
+                    {
+                        <option value="@statusOption" selected>@statusOption</option>
+                    }
+                    else
+                    {
+                        <option value="@statusOption">@statusOption</option>
+                    }
+                }
+            </select>
+
+            <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">Search</button>
+
+            @if (!string.IsNullOrWhiteSpace(Model.Search) || Model.Status.HasValue)
+            {
+                <a asp-area="Admin" asp-controller="Platform" asp-action="Index" class="admin-btn admin-btn--ghost admin-btn--sm">Clear</a>
+            }
+        </form>
+    </div>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table admin-table--wide">
+            <colgroup>
+                <col style="width: 20%" />
+                <col style="width: 17%" />
+                <col style="width: 13%" />
+                <col style="width: 23%" />
+                <col style="width: 11%" />
+                <col style="width: 16%" />
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Slug</th>
+                    <th>Status</th>
+                    <th>Categories</th>
+                    <th>Created</th>
+                    <th class="col-actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Platforms.Count == 0)
+                {
+                    <tr>
+                        <td colspan="6" class="admin-empty">
+                            No platforms match the current filters. Add a platform or clear the search.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var platform in Model.Platforms)
+                    {
+                        <tr>
+                            <td>
+                                <span class="admin-cell-title">@platform.Name</span>
+                            </td>
+                            <td>
+                                <span class="admin-ltr">@platform.Slug</span>
+                            </td>
+                            <td>
+                                <form asp-area="Admin" asp-controller="Platform" asp-action="UpdateStatus" method="post" asp-antiforgery="true" class="admin-inline-form">
+                                    <input type="hidden" name="id" value="@platform.Id" />
+                                    <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
+                                    <select name="status" class="admin-select admin-select--xs" data-auto-submit aria-label="Change platform status">
+                                        @foreach (var statusOption in Enum.GetValues<PlatformStatus>())
+                                        {
+                                            if (platform.Status == statusOption)
+                                            {
+                                                <option value="@statusOption" selected>@statusOption</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@statusOption">@statusOption</option>
+                                            }
+                                        }
+                                    </select>
+                                </form>
+                            </td>
+                            <td>
+                                @if (string.IsNullOrWhiteSpace(platform.Categories))
+                                {
+                                    <span class="admin-muted">—</span>
+                                }
+                                else
+                                {
+                                    @platform.Categories
+                                }
+                            </td>
+                            <td>@platform.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</td>
+                            <td class="col-actions">
+                                <div class="cell-actions">
+                                    <a asp-area="Admin" asp-controller="Platform" asp-action="Edit" asp-route-id="@platform.Id" class="admin-btn admin-btn--ghost admin-btn--sm">Edit</a>
+                                    <form asp-area="Admin" asp-controller="Platform" asp-action="Delete" method="post" asp-antiforgery="true" data-confirm="Delete this platform and all of its linked data? This cannot be undone.">
+                                        <input type="hidden" name="id" value="@platform.Id" />
+                                        <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="admin-pagination">
+        <span>Showing @Model.FirstItem–@Model.LastItem of @Model.TotalCount platform@(Model.TotalCount == 1 ? "" : "s")</span>
+
+        <div class="admin-actions">
+            @if (Model.HasPrevious)
+            {
+                <a asp-area="Admin" asp-controller="Platform" asp-action="Index" asp-route-search="@Model.Search" asp-route-status="@Model.Status" asp-route-page="@(Model.Page - 1)" class="admin-btn admin-btn--ghost admin-btn--sm">Previous</a>
+            }
+            else
+            {
+                <span class="admin-btn admin-btn--ghost admin-btn--sm is-disabled">Previous</span>
+            }
+
+            <span class="admin-page-indicator">Page @Model.Page of @Model.TotalPages</span>
+
+            @if (Model.HasNext)
+            {
+                <a asp-area="Admin" asp-controller="Platform" asp-action="Index" asp-route-search="@Model.Search" asp-route-status="@Model.Status" asp-route-page="@(Model.Page + 1)" class="admin-btn admin-btn--ghost admin-btn--sm">Next</a>
+            }
+            else
+            {
+                <span class="admin-btn admin-btn--ghost admin-btn--sm is-disabled">Next</span>
+            }
+        </div>
+    </div>
+</div>

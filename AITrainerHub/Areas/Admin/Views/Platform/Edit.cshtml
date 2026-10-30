@@ -1,0 +1,604 @@
+@model PlatformEditViewModel
+@{
+    ViewData["Title"] = "Edit Platform";
+
+    var linkedCategoryIds = Model.Details.Categories.Select(category => category.CategoryId).ToHashSet();
+    var availableCategories = Model.AllCategories.Where(category => !linkedCategoryIds.Contains(category.Id)).ToList();
+
+    var linkedCountryIds = Model.Details.Countries.Select(country => country.CountryId).ToHashSet();
+    var availableCountries = Model.AllCountries.Where(country => !linkedCountryIds.Contains(country.Id)).ToList();
+
+    var linkedPaymentMethodIds = Model.Details.PaymentMethods.Select(method => method.PaymentMethodId).ToHashSet();
+    var availablePaymentMethods = Model.AllPaymentMethods.Where(method => !linkedPaymentMethodIds.Contains(method.Id)).ToList();
+}
+
+<div class="admin-page-header">
+    <div>
+        <h2 class="admin-page-title">Edit Platform</h2>
+        <p class="admin-page-subtitle">Update the platform details and manage every linked reference record.</p>
+    </div>
+
+    <div class="admin-page-actions">
+        <a asp-area="Admin" asp-controller="Platform" asp-action="Index" class="admin-btn admin-btn--ghost">Back to Platforms</a>
+    </div>
+</div>
+
+<div class="admin-stack">
+    <div class="admin-card">
+        <div class="admin-card__header">
+            <div>
+                <h3 class="admin-card__title">Platform details</h3>
+                <p class="admin-card__subtitle">Core information shown on the public platform page.</p>
+            </div>
+            <span class="admin-badge admin-badge--gray">@Model.Details.Slug</span>
+        </div>
+
+        <div class="admin-card__body">
+            <form asp-area="Admin" asp-controller="Platform" asp-action="Edit" asp-route-id="@Model.Form.Id" method="post" asp-antiforgery="true" class="admin-form" data-submit-once>
+                <input type="hidden" asp-for="Form.Id" />
+
+                <div asp-validation-summary="All" class="validation-summary-errors"></div>
+
+                <div class="admin-grid admin-grid--2">
+                    <div class="admin-field">
+                        <label asp-for="Form.Name" class="admin-label">Platform name</label>
+                        <input asp-for="Form.Name" class="admin-input" autocomplete="off" />
+                        <span asp-validation-for="Form.Name" class="field-validation-error"></span>
+                    </div>
+
+                    <div class="admin-field">
+                        <label asp-for="Form.Slug" class="admin-label">Slug</label>
+                        <input asp-for="Form.Slug" class="admin-input admin-ltr" autocomplete="off" />
+                        <span class="admin-help">Lowercase letters, numbers, and hyphens only.</span>
+                        <span asp-validation-for="Form.Slug" class="field-validation-error"></span>
+                    </div>
+                </div>
+
+                <div class="admin-grid admin-grid--2">
+                    <div class="admin-field">
+                        <label asp-for="Form.WebsiteUrl" class="admin-label">Website URL</label>
+                        <input asp-for="Form.WebsiteUrl" class="admin-input admin-ltr" autocomplete="off" />
+                        <span asp-validation-for="Form.WebsiteUrl" class="field-validation-error"></span>
+                    </div>
+
+                    <div class="admin-field">
+                        <label asp-for="Form.ReferralLink" class="admin-label">Referral link (optional)</label>
+                        <input asp-for="Form.ReferralLink" class="admin-input admin-ltr" autocomplete="off" />
+                        <span asp-validation-for="Form.ReferralLink" class="field-validation-error"></span>
+                    </div>
+                </div>
+
+                <div class="admin-field" style="max-width: 16rem;">
+                    <label asp-for="Form.Status" class="admin-label">Status</label>
+                    <select asp-for="Form.Status" asp-items="Html.GetEnumSelectList<PlatformStatus>()" class="admin-select"></select>
+                    <span asp-validation-for="Form.Status" class="field-validation-error"></span>
+                </div>
+
+                <div class="admin-field">
+                    <label asp-for="Form.DescriptionAr" class="admin-label">Arabic description</label>
+                    <textarea asp-for="Form.DescriptionAr" class="admin-textarea" dir="rtl"></textarea>
+                    <span asp-validation-for="Form.DescriptionAr" class="field-validation-error"></span>
+                </div>
+
+                <div class="admin-field">
+                    <label asp-for="Form.DescriptionEn" class="admin-label">English description</label>
+                    <textarea asp-for="Form.DescriptionEn" class="admin-textarea" dir="ltr"></textarea>
+                    <span asp-validation-for="Form.DescriptionEn" class="field-validation-error"></span>
+                </div>
+
+                <div class="admin-actions">
+                    <button type="submit" class="admin-btn admin-btn--primary">Save Changes</button>
+                    <a asp-area="Admin" asp-controller="Platform" asp-action="Index" class="admin-btn admin-btn--ghost">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="admin-grid admin-grid--2">
+        <div class="admin-card">
+            <div class="admin-card__header">
+                <div>
+                    <h3 class="admin-card__title">Linked Categories</h3>
+                    <p class="admin-card__subtitle">Categories displayed on the platform page.</p>
+                </div>
+                <span class="admin-badge admin-badge--purple">@Model.Details.Categories.Count</span>
+            </div>
+
+            <div class="admin-card__body">
+                <form asp-area="Admin" asp-controller="Platform" asp-action="AddCategory" method="post" asp-antiforgery="true" class="admin-inline-form">
+                    <input type="hidden" name="PlatformId" value="@Model.Form.Id" />
+                    <select name="CategoryId" class="admin-select admin-select--sm" aria-label="Category to link" disabled="@(availableCategories.Count == 0)">
+                        @if (availableCategories.Count == 0)
+                        {
+                            <option value="">All categories are linked</option>
+                        }
+                        else
+                        {
+                            @foreach (var category in availableCategories)
+                            {
+                                <option value="@category.Id">@category.Name</option>
+                            }
+                        }
+                    </select>
+                    <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm" disabled="@(availableCategories.Count == 0)">Link Category</button>
+                </form>
+            </div>
+
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <colgroup>
+                        <col style="width: 38%" />
+                        <col style="width: 42%" />
+                        <col style="width: 20%" />
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th class="col-actions">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Details.Categories.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="3" class="admin-empty">No categories linked yet.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var category in Model.Details.Categories)
+                            {
+                                <tr>
+                                    <td><span class="admin-cell-title">@category.Name</span></td>
+                                    <td>@(string.IsNullOrWhiteSpace(category.Description) ? "—" : category.Description)</td>
+                                    <td class="col-actions">
+                                        <div class="cell-actions">
+                                            <form asp-area="Admin" asp-controller="Platform" asp-action="RemoveCategory" method="post" asp-antiforgery="true" data-confirm="Unlink this category from the platform?">
+                                                <input type="hidden" name="platformId" value="@Model.Form.Id" />
+                                                <input type="hidden" name="categoryId" value="@category.CategoryId" />
+                                                <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Remove</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="admin-card">
+            <div class="admin-card__header">
+                <div>
+                    <h3 class="admin-card__title">Linked Payment Methods</h3>
+                    <p class="admin-card__subtitle">Payout options available on this platform.</p>
+                </div>
+                <span class="admin-badge admin-badge--purple">@Model.Details.PaymentMethods.Count</span>
+            </div>
+
+            <div class="admin-card__body">
+                <form asp-area="Admin" asp-controller="Platform" asp-action="AddPaymentMethod" method="post" asp-antiforgery="true" class="admin-inline-form">
+                    <input type="hidden" name="PlatformId" value="@Model.Form.Id" />
+                    <select name="PaymentMethodId" class="admin-select admin-select--sm" aria-label="Payment method to link" disabled="@(availablePaymentMethods.Count == 0)">
+                        @if (availablePaymentMethods.Count == 0)
+                        {
+                            <option value="">All payment methods are linked</option>
+                        }
+                        else
+                        {
+                            @foreach (var method in availablePaymentMethods)
+                            {
+                                <option value="@method.Id">@method.Name</option>
+                            }
+                        }
+                    </select>
+                    <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm" disabled="@(availablePaymentMethods.Count == 0)">Link Method</button>
+                </form>
+            </div>
+
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <colgroup>
+                        <col style="width: 75%" />
+                        <col style="width: 25%" />
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>Payment Method</th>
+                            <th class="col-actions">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Details.PaymentMethods.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="2" class="admin-empty">No payment methods linked yet.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var method in Model.Details.PaymentMethods)
+                            {
+                                <tr>
+                                    <td><span class="admin-cell-title">@method.Name</span></td>
+                                    <td class="col-actions">
+                                        <div class="cell-actions">
+                                            <form asp-area="Admin" asp-controller="Platform" asp-action="RemovePaymentMethod" method="post" asp-antiforgery="true" data-confirm="Unlink this payment method from the platform?">
+                                                <input type="hidden" name="platformId" value="@Model.Form.Id" />
+                                                <input type="hidden" name="paymentMethodId" value="@method.PaymentMethodId" />
+                                                <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Remove</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-card">
+        <div class="admin-card__header">
+            <div>
+                <h3 class="admin-card__title">Countries</h3>
+                <p class="admin-card__subtitle">Country availability, support level, and notes.</p>
+            </div>
+            <span class="admin-badge admin-badge--purple">@Model.Details.Countries.Count</span>
+        </div>
+
+        <div class="admin-card__body">
+            <form asp-area="Admin" asp-controller="Platform" asp-action="AddCountry" method="post" asp-antiforgery="true" class="admin-inline-form">
+                <input type="hidden" name="PlatformId" value="@Model.Form.Id" />
+                <select name="CountryId" class="admin-select admin-select--sm" aria-label="Country to link" disabled="@(availableCountries.Count == 0)">
+                    @if (availableCountries.Count == 0)
+                    {
+                        <option value="">All countries are linked</option>
+                    }
+                    else
+                    {
+                        @foreach (var country in availableCountries)
+                        {
+                            <option value="@country.Id">@country.NameEn (@country.IsoCode)</option>
+                        }
+                    }
+                </select>
+                <label class="admin-check">
+                    <input type="checkbox" name="IsFullySupported" value="true" checked />
+                    Fully supported
+                </label>
+                <input type="text" name="Notes" class="admin-input admin-input--sm" style="max-width: 18rem;" placeholder="Optional notes" maxlength="500" />
+                <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm" disabled="@(availableCountries.Count == 0)">Link Country</button>
+            </form>
+        </div>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table admin-table--wide">
+                <colgroup>
+                    <col style="width: 20%" />
+                    <col style="width: 8%" />
+                    <col style="width: 14%" />
+                    <col style="width: 26%" />
+                    <col style="width: 32%" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>Country</th>
+                        <th>Code</th>
+                        <th>Fully Supported</th>
+                        <th>Notes</th>
+                        <th class="col-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Details.Countries.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="5" class="admin-empty">No countries linked yet.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var country in Model.Details.Countries)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="admin-cell-title">@country.NameEn</span>
+                                    <span class="admin-cell-sub" dir="rtl">@country.NameAr</span>
+                                </td>
+                                <td><span class="admin-ltr">@country.IsoCode</span></td>
+                                <td>
+                                    <form id="country-form-@country.CountryId" asp-area="Admin" asp-controller="Platform" asp-action="UpdateCountry" method="post" asp-antiforgery="true" class="admin-inline-form">
+                                        <input type="hidden" name="PlatformId" value="@Model.Form.Id" />
+                                        <input type="hidden" name="CountryId" value="@country.CountryId" />
+                                        <label class="admin-switch" title="Toggle full support">
+                                            <input type="checkbox" name="IsFullySupported" value="true" checked="@(country.IsFullySupported ? "checked" : null)" />
+                                            <span class="admin-switch__track"></span>
+                                        </label>
+                                    </form>
+                                </td>
+                                <td>
+                                    <input type="text"
+                                           name="Notes"
+                                           form="country-form-@country.CountryId"
+                                           value="@country.Notes"
+                                           class="admin-input admin-input--sm admin-country-note"
+                                           maxlength="500"
+                                           placeholder="No notes"
+                                           aria-label="Country notes" />
+                                </td>
+                                <td class="col-actions">
+                                    <div class="cell-actions">
+                                        <button type="submit" form="country-form-@country.CountryId" class="admin-btn admin-btn--primary admin-btn--sm">Save</button>
+                                        <form asp-area="Admin" asp-controller="Platform" asp-action="RemoveCountry" method="post" asp-antiforgery="true" data-confirm="Unlink this country from the platform?">
+                                            <input type="hidden" name="platformId" value="@Model.Form.Id" />
+                                            <input type="hidden" name="countryId" value="@country.CountryId" />
+                                            <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Remove</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="admin-card">
+        <div class="admin-card__header">
+            <div>
+                <h3 class="admin-card__title">Onboarding Steps</h3>
+                <p class="admin-card__subtitle">The step-by-step guide shown to new users.</p>
+            </div>
+            <a asp-area="Admin" asp-controller="Platform" asp-action="CreateOnboardingStep" asp-route-platformId="@Model.Form.Id" class="admin-btn admin-btn--primary admin-btn--sm">Add Step</a>
+        </div>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table admin-table--wide">
+                <colgroup>
+                    <col style="width: 7%" />
+                    <col style="width: 25%" />
+                    <col style="width: 26%" />
+                    <col style="width: 20%" />
+                    <col style="width: 22%" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Tip</th>
+                        <th class="col-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Details.OnboardingSteps.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="5" class="admin-empty">No onboarding steps yet.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var step in Model.Details.OnboardingSteps.OrderBy(step => step.StepNumber))
+                        {
+                            <tr>
+                                <td><span class="admin-cell-title">@step.StepNumber</span></td>
+                                <td>
+                                    <span class="admin-cell-title">@step.TitleEn</span>
+                                    <span class="admin-cell-sub" dir="rtl">@step.TitleAr</span>
+                                </td>
+                                <td>
+                                    <span>@step.DescriptionEn</span>
+                                    <span class="admin-cell-sub" dir="rtl">@step.DescriptionAr</span>
+                                </td>
+                                <td>@(string.IsNullOrWhiteSpace(step.Tip) ? "—" : step.Tip)</td>
+                                <td class="col-actions">
+                                    <div class="cell-actions">
+                                        <a asp-area="Admin" asp-controller="Platform" asp-action="EditOnboardingStep" asp-route-id="@step.Id" class="admin-btn admin-btn--ghost admin-btn--sm">Edit</a>
+                                        <form asp-area="Admin" asp-controller="Platform" asp-action="DeleteOnboardingStep" method="post" asp-antiforgery="true" data-confirm="Delete this onboarding step permanently?">
+                                            <input type="hidden" name="id" value="@step.Id" />
+                                            <input type="hidden" name="platformId" value="@Model.Form.Id" />
+                                            <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="admin-card">
+        <div class="admin-card__header">
+            <div>
+                <h3 class="admin-card__title">Video Guides</h3>
+                <p class="admin-card__subtitle">Tutorial videos attached to this platform.</p>
+            </div>
+            <a asp-area="Admin" asp-controller="Platform" asp-action="CreateVideoGuide" asp-route-platformId="@Model.Form.Id" class="admin-btn admin-btn--primary admin-btn--sm">Add Video Guide</a>
+        </div>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table admin-table--wide">
+                <colgroup>
+                    <col style="width: 24%" />
+                    <col style="width: 10%" />
+                    <col style="width: 12%" />
+                    <col style="width: 16%" />
+                    <col style="width: 11%" />
+                    <col style="width: 27%" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Language</th>
+                        <th>Source</th>
+                        <th>Published</th>
+                        <th>Status</th>
+                        <th class="col-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Details.VideoGuides.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="6" class="admin-empty">No video guides yet.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var guide in Model.Details.VideoGuides)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="admin-cell-title">@guide.Title</span>
+                                    <span class="admin-cell-sub">@guide.AuthorOrChannel</span>
+                                </td>
+                                <td>@guide.Language</td>
+                                <td>@guide.SourceType</td>
+                                <td>@(guide.PublishedAt.HasValue ? guide.PublishedAt.Value.ToString("yyyy-MM-dd") : "—")</td>
+                                <td>
+                                    @if (guide.IsApproved)
+                                    {
+                                        <span class="admin-badge admin-badge--green">Approved</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="admin-badge admin-badge--amber">Pending</span>
+                                    }
+                                </td>
+                                <td class="col-actions">
+                                    <div class="cell-actions">
+                                        <a href="@guide.Url" target="_blank" rel="noopener noreferrer" class="admin-btn admin-btn--ghost admin-btn--sm">Open</a>
+                                        <a asp-area="Admin" asp-controller="Platform" asp-action="EditVideoGuide" asp-route-id="@guide.Id" class="admin-btn admin-btn--ghost admin-btn--sm">Edit</a>
+                                        <form asp-area="Admin" asp-controller="Platform" asp-action="DeleteVideoGuide" method="post" asp-antiforgery="true" data-confirm="Delete this video guide permanently?">
+                                            <input type="hidden" name="id" value="@guide.Id" />
+                                            <input type="hidden" name="platformId" value="@Model.Form.Id" />
+                                            <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="admin-card">
+        <div class="admin-card__header">
+            <div>
+                <h3 class="admin-card__title">Reviews</h3>
+                <p class="admin-card__subtitle">Approve reviews to publish them, or keep them pending.</p>
+            </div>
+            <span class="admin-badge admin-badge--purple">@Model.Reviews.Count total</span>
+        </div>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table admin-table--xwide">
+                <colgroup>
+                    <col style="width: 15%" />
+                    <col style="width: 8%" />
+                    <col style="width: 32%" />
+                    <col style="width: 12%" />
+                    <col style="width: 12%" />
+                    <col style="width: 21%" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>Reviewer</th>
+                        <th>Rating</th>
+                        <th>Comment</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th class="col-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Reviews.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="6" class="admin-empty">No reviews yet. Add the first one below.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var review in Model.Reviews)
+                        {
+                            <tr>
+                                <td>@review.ReviewerName</td>
+                                <td>@review.Rating / 5</td>
+                                <td>@review.Comment</td>
+                                <td>
+                                    @if (review.IsApproved)
+                                    {
+                                        <span class="admin-badge admin-badge--green">Approved</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="admin-badge admin-badge--amber">Pending</span>
+                                    }
+                                </td>
+                                <td>@review.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</td>
+                                <td class="col-actions">
+                                    <div class="cell-actions">
+                                        <form asp-area="Admin" asp-controller="Platform" asp-action="SetReviewApproval" method="post" asp-antiforgery="true">
+                                            <input type="hidden" name="id" value="@review.Id" />
+                                            <input type="hidden" name="platformId" value="@Model.Form.Id" />
+                                            <input type="hidden" name="isApproved" value="@((!review.IsApproved).ToString().ToLowerInvariant())" />
+                                            <button type="submit" class="admin-btn @(review.IsApproved ? "admin-btn--ghost" : "admin-btn--success") admin-btn--sm">
+                                                @(review.IsApproved ? "Mark Pending" : "Approve")
+                                            </button>
+                                        </form>
+                                        <form asp-area="Admin" asp-controller="Platform" asp-action="DeleteReview" method="post" asp-antiforgery="true" data-confirm="Delete this review permanently?">
+                                            <input type="hidden" name="id" value="@review.Id" />
+                                            <input type="hidden" name="platformId" value="@Model.Form.Id" />
+                                            <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <form asp-area="Admin" asp-controller="Platform" asp-action="AddReview" method="post" asp-antiforgery="true" class="admin-review-form" data-submit-once>
+            <input type="hidden" name="PlatformId" value="@Model.Form.Id" />
+
+            <div class="admin-grid admin-grid--3">
+                <div class="admin-field">
+                    <label class="admin-label" for="review-reviewer">Reviewer name</label>
+                    <input id="review-reviewer" name="ReviewerName" class="admin-input" maxlength="100" required placeholder="e.g. Sara Ahmed" />
+                </div>
+
+                <div class="admin-field">
+                    <label class="admin-label" for="review-rating">Rating</label>
+                    <select id="review-rating" name="Rating" class="admin-select">
+                        @for (var rating = 5; rating >= 1; rating--)
+                        {
+                            <option value="@rating">@rating / 5</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="admin-field">
+                <label class="admin-label" for="review-comment">Comment</label>
+                <textarea id="review-comment" name="Comment" class="admin-textarea" maxlength="1000" required placeholder="Write the review comment"></textarea>
+            </div>
+
+            <div class="admin-actions">
+                <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Add Review</button>
+            </div>
+        </form>
+    </div>
+</div>

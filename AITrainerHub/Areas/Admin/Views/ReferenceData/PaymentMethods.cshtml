@@ -1,0 +1,74 @@
+@model PaymentMethodsViewModel
+@{
+    ViewData["Title"] = "Reference Data";
+    ViewData["ReferenceTab"] = "payments";
+}
+
+<div class="admin-page-header">
+    <div>
+        <h2 class="admin-page-title">Reference Data</h2>
+        <p class="admin-page-subtitle">Manage the categories, payment methods, and countries used across the platform catalog.</p>
+    </div>
+</div>
+
+<partial name="_ReferenceDataTabs" />
+
+<div class="admin-card">
+    <div class="admin-card__header">
+        <div>
+            <h3 class="admin-card__title">Payment Methods</h3>
+            <p class="admin-card__subtitle">Payout options that can be linked to any platform.</p>
+        </div>
+
+        <form asp-area="Admin" asp-controller="ReferenceData" asp-action="CreatePaymentMethod" method="post" asp-antiforgery="true" class="admin-inline-form">
+            <input name="Name" class="admin-input admin-input--sm" placeholder="New payment method" maxlength="100" required autocomplete="off" />
+            <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Add</button>
+        </form>
+    </div>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <colgroup>
+                <col style="width: 70%" />
+                <col style="width: 30%" />
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th class="col-actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items.Count == 0)
+                {
+                    <tr>
+                        <td colspan="2" class="admin-empty">No payment methods yet. Use the form above to add the first one.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var method in Model.Items)
+                    {
+                        <tr>
+                            <td>
+                                <form id="payment-form-@method.Id" asp-area="Admin" asp-controller="ReferenceData" asp-action="UpdatePaymentMethod" method="post" asp-antiforgery="true" class="admin-inline-form">
+                                    <input type="hidden" name="Id" value="@method.Id" />
+                                    <input name="Name" value="@method.Name" class="admin-input admin-input--sm" maxlength="100" required autocomplete="off" aria-label="Payment method name" />
+                                </form>
+                            </td>
+                            <td class="col-actions">
+                                <div class="cell-actions">
+                                    <button type="submit" form="payment-form-@method.Id" class="admin-btn admin-btn--primary admin-btn--sm">Save</button>
+                                    <form asp-area="Admin" asp-controller="ReferenceData" asp-action="DeletePaymentMethod" method="post" asp-antiforgery="true" data-confirm="Delete this payment method? Platforms linked to it will lose the link.">
+                                        <input type="hidden" name="id" value="@method.Id" />
+                                        <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

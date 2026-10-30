@@ -1,0 +1,345 @@
+@model ModerationQueueViewModel
+@{
+    ViewData["Title"] = "Moderation Queue";
+
+    string LeaderName(Guid id)
+    {
+        return Model.LeaderNames.TryGetValue(id, out var name) ? name : "Unknown leader";
+    }
+
+    string PlatformName(Guid id)
+    {
+        return Model.PlatformNames.TryGetValue(id, out var name) ? name : "Unknown platform";
+    }
+
+    string CategoryName(Guid? id)
+    {
+        if (!id.HasValue)
+        {
+            return "—";
+        }
+
+        return Model.CategoryNames.TryGetValue(id.Value, out var name) ? name : "—";
+    }
+
+    string TabClass(string tab)
+    {
+        return string.Equals(Model.ActiveTab, tab, StringComparison.OrdinalIgnoreCase)
+            ? "admin-tab is-active"
+            : "admin-tab";
+    }
+
+    string PanelClass(string tab)
+    {
+        return string.Equals(Model.ActiveTab, tab, StringComparison.OrdinalIgnoreCase)
+            ? "admin-tab-panel"
+            : "admin-tab-panel hidden";
+    }
+}
+
+<div class="admin-page-header">
+    <div>
+        <h2 class="admin-page-title">Moderation Queue</h2>
+        <p class="admin-page-subtitle">Review, approve, or remove content submitted by leaders and visitors.</p>
+    </div>
+</div>
+
+<div class="admin-tabs" role="tablist" aria-label="Moderation queues">
+    <button type="button" class="@TabClass("opportunities")" data-admin-tab="opportunities" role="tab" aria-selected="@(Model.ActiveTab == "opportunities" ? "true" : "false")">
+        Opportunities <span class="admin-tab__count">(@Model.Opportunities.Count)</span>
+    </button>
+    <button type="button" class="@TabClass("suggestions")" data-admin-tab="suggestions" role="tab" aria-selected="@(Model.ActiveTab == "suggestions" ? "true" : "false")">
+        Suggestions <span class="admin-tab__count">(@Model.Suggestions.Count)</span>
+    </button>
+    <button type="button" class="@TabClass("video-guides")" data-admin-tab="video-guides" role="tab" aria-selected="@(Model.ActiveTab == "video-guides" ? "true" : "false")">
+        Video Guides <span class="admin-tab__count">(@Model.VideoGuides.Count)</span>
+    </button>
+    <button type="button" class="@TabClass("reviews")" data-admin-tab="reviews" role="tab" aria-selected="@(Model.ActiveTab == "reviews" ? "true" : "false")">
+        Reviews <span class="admin-tab__count">(@Model.Reviews.Count)</span>
+    </button>
+</div>
+
+<section class="@PanelClass("opportunities")" data-admin-panel="opportunities" role="tabpanel">
+    <div class="admin-card">
+        <div class="admin-card__header">
+            <div>
+                <h3 class="admin-card__title">Pending Work Opportunities</h3>
+                <p class="admin-card__subtitle">Approve an opportunity to publish it, or delete it to reject the submission.</p>
+            </div>
+            <span class="admin-badge admin-badge--amber">@Model.Opportunities.Count pending</span>
+        </div>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table admin-table--wide">
+                <colgroup>
+                    <col style="width: 25%" />
+                    <col style="width: 17%" />
+                    <col style="width: 21%" />
+                    <col style="width: 12%" />
+                    <col style="width: 25%" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Leader</th>
+                        <th>WhatsApp</th>
+                        <th>Submitted</th>
+                        <th class="col-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Opportunities.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="5" class="admin-empty">No pending work opportunities.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var opportunity in Model.Opportunities)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="admin-cell-title">@opportunity.Title</span>
+                                    <span class="admin-cell-sub">@opportunity.DescriptionEn</span>
+                                </td>
+                                <td>@LeaderName(opportunity.LeaderId)</td>
+                                <td>
+                                    <a href="@opportunity.WhatsAppLink" target="_blank" rel="noopener noreferrer" class="admin-link">Open link</a>
+                                </td>
+                                <td>@opportunity.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</td>
+                                <td class="col-actions">
+                                    <div class="cell-actions">
+                                        <form asp-area="Admin" asp-controller="Moderation" asp-action="ApproveOpportunity" method="post" asp-antiforgery="true">
+                                            <input type="hidden" name="id" value="@opportunity.Id" />
+                                            <button type="submit" class="admin-btn admin-btn--success admin-btn--sm">Approve</button>
+                                        </form>
+                                        <form asp-area="Admin" asp-controller="Moderation" asp-action="RejectOpportunity" method="post" asp-antiforgery="true" data-confirm="Delete this work opportunity permanently?">
+                                            <input type="hidden" name="id" value="@opportunity.Id" />
+                                            <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section class="@PanelClass("suggestions")" data-admin-panel="suggestions" role="tabpanel">
+    <div class="admin-card">
+        <div class="admin-card__header">
+            <div>
+                <h3 class="admin-card__title">Pending Platform Suggestions</h3>
+                <p class="admin-card__subtitle">Mark a suggestion as reviewed once it has been handled, or delete it.</p>
+            </div>
+            <span class="admin-badge admin-badge--amber">@Model.Suggestions.Count pending</span>
+        </div>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table admin-table--xwide">
+                <colgroup>
+                    <col style="width: 16%" />
+                    <col style="width: 18%" />
+                    <col style="width: 25%" />
+                    <col style="width: 12%" />
+                    <col style="width: 11%" />
+                    <col style="width: 18%" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>Platform</th>
+                        <th>URL</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Submitted</th>
+                        <th class="col-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Suggestions.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="6" class="admin-empty">No pending platform suggestions.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var suggestion in Model.Suggestions)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="admin-cell-title">@suggestion.PlatformName</span>
+                                    @if (!string.IsNullOrWhiteSpace(suggestion.EmailOfUser))
+                                    {
+                                        <span class="admin-cell-sub">@suggestion.EmailOfUser</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a href="@suggestion.Url" target="_blank" rel="noopener noreferrer" class="admin-link">Open link</a>
+                                </td>
+                                <td>@suggestion.Description</td>
+                                <td>@CategoryName(suggestion.CategoryId)</td>
+                                <td>@suggestion.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</td>
+                                <td class="col-actions">
+                                    <div class="cell-actions">
+                                        <form asp-area="Admin" asp-controller="Moderation" asp-action="ApproveSuggestion" method="post" asp-antiforgery="true">
+                                            <input type="hidden" name="id" value="@suggestion.Id" />
+                                            <button type="submit" class="admin-btn admin-btn--success admin-btn--sm">Mark Reviewed</button>
+                                        </form>
+                                        <form asp-area="Admin" asp-controller="Moderation" asp-action="RejectSuggestion" method="post" asp-antiforgery="true" data-confirm="Delete this platform suggestion permanently?">
+                                            <input type="hidden" name="id" value="@suggestion.Id" />
+                                            <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section class="@PanelClass("video-guides")" data-admin-panel="video-guides" role="tabpanel">
+    <div class="admin-card">
+        <div class="admin-card__header">
+            <div>
+                <h3 class="admin-card__title">Pending Video Guides</h3>
+                <p class="admin-card__subtitle">Approve a guide to make it visible to visitors, or delete it.</p>
+            </div>
+            <span class="admin-badge admin-badge--amber">@Model.VideoGuides.Count pending</span>
+        </div>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table admin-table--wide">
+                <colgroup>
+                    <col style="width: 25%" />
+                    <col style="width: 19%" />
+                    <col style="width: 10%" />
+                    <col style="width: 13%" />
+                    <col style="width: 12%" />
+                    <col style="width: 21%" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Platform</th>
+                        <th>Language</th>
+                        <th>Source</th>
+                        <th>Submitted</th>
+                        <th class="col-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.VideoGuides.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="6" class="admin-empty">No pending video guides.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var guide in Model.VideoGuides)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="admin-cell-title">@guide.Title</span>
+                                    <span class="admin-cell-sub">@guide.AuthorOrChannel</span>
+                                </td>
+                                <td>@PlatformName(guide.PlatformId)</td>
+                                <td>@guide.Language</td>
+                                <td>@guide.SourceType</td>
+                                <td>@guide.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</td>
+                                <td class="col-actions">
+                                    <div class="cell-actions">
+                                        <form asp-area="Admin" asp-controller="Moderation" asp-action="ApproveVideoGuide" method="post" asp-antiforgery="true">
+                                            <input type="hidden" name="id" value="@guide.Id" />
+                                            <button type="submit" class="admin-btn admin-btn--success admin-btn--sm">Approve</button>
+                                        </form>
+                                        <form asp-area="Admin" asp-controller="Moderation" asp-action="RejectVideoGuide" method="post" asp-antiforgery="true" data-confirm="Delete this video guide permanently?">
+                                            <input type="hidden" name="id" value="@guide.Id" />
+                                            <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section class="@PanelClass("reviews")" data-admin-panel="reviews" role="tabpanel">
+    <div class="admin-card">
+        <div class="admin-card__header">
+            <div>
+                <h3 class="admin-card__title">Pending Reviews</h3>
+                <p class="admin-card__subtitle">Approve a review to publish it, or delete it to reject it.</p>
+            </div>
+            <span class="admin-badge admin-badge--amber">@Model.Reviews.Count pending</span>
+        </div>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table admin-table--xwide">
+                <colgroup>
+                    <col style="width: 14%" />
+                    <col style="width: 16%" />
+                    <col style="width: 8%" />
+                    <col style="width: 30%" />
+                    <col style="width: 12%" />
+                    <col style="width: 20%" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>Reviewer</th>
+                        <th>Platform</th>
+                        <th>Rating</th>
+                        <th>Comment</th>
+                        <th>Submitted</th>
+                        <th class="col-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Reviews.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="6" class="admin-empty">No pending reviews.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var review in Model.Reviews)
+                        {
+                            <tr>
+                                <td>@review.ReviewerName</td>
+                                <td>@PlatformName(review.PlatformId)</td>
+                                <td>@review.Rating / 5</td>
+                                <td>@review.Comment</td>
+                                <td>@review.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</td>
+                                <td class="col-actions">
+                                    <div class="cell-actions">
+                                        <form asp-area="Admin" asp-controller="Moderation" asp-action="ApproveReview" method="post" asp-antiforgery="true">
+                                            <input type="hidden" name="id" value="@review.Id" />
+                                            <button type="submit" class="admin-btn admin-btn--success admin-btn--sm">Approve</button>
+                                        </form>
+                                        <form asp-area="Admin" asp-controller="Moderation" asp-action="RejectReview" method="post" asp-antiforgery="true" data-confirm="Delete this review permanently?">
+                                            <input type="hidden" name="id" value="@review.Id" />
+                                            <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

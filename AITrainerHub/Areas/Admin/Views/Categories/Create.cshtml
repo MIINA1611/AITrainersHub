@@ -1,0 +1,40 @@
+@model CategoryFormRequest
+@{
+    ViewData["Title"] = "New Category";
+}
+
+<div class="admin-page-header">
+    <div>
+        <h2 class="admin-page-title">New Category</h2>
+        <p class="admin-page-subtitle">Add a category to the shared reference data catalog.</p>
+    </div>
+
+    <div class="admin-page-actions">
+        <a asp-area="Admin" asp-controller="Categories" asp-action="Index" class="admin-btn admin-btn--ghost">Back to Categories</a>
+    </div>
+</div>
+
+<div class="admin-card" style="max-width: 46rem;">
+    <div class="admin-card__body">
+        <form asp-area="Admin" asp-controller="Categories" asp-action="Create" method="post" asp-antiforgery="true" class="admin-form" data-submit-once>
+            <div asp-validation-summary="All" class="validation-summary-errors"></div>
+
+            <div class="admin-field">
+                <label asp-for="Name" class="admin-label">Category name</label>
+                <input asp-for="Name" class="admin-input" placeholder="e.g. Freelancing" autocomplete="off" />
+                <span asp-validation-for="Name" class="field-validation-error"></span>
+            </div>
+
+            <div class="admin-field">
+                <label asp-for="Description" class="admin-label">Description (optional)</label>
+                <textarea asp-for="Description" class="admin-textarea" placeholder="Short description of this category"></textarea>
+                <span asp-validation-for="Description" class="field-validation-error"></span>
+            </div>
+
+            <div class="admin-actions">
+                <button type="submit" class="admin-btn admin-btn--primary">Create Category</button>
+                <a asp-area="Admin" asp-controller="Categories" asp-action="Index" class="admin-btn admin-btn--ghost">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

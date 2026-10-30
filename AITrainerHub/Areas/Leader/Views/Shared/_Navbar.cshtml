@@ -1,0 +1,96 @@
+@using Microsoft.AspNetCore.Identity
+@using AITrainersHub.Domain.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+    var displayName = currentUser?.DisplayName ?? User.Identity?.Name ?? "Guest";
+    var isAdmin = User.IsInRole("Admin");
+}
+<header class="sticky top-0 z-40 backdrop-blur-xl bg-black/40 border-b border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+            <button type="button"
+                    id="usersDrawerToggle"
+                    class="md:hidden inline-flex items-center justify-center h-9 w-9 rounded-md text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
+                    aria-label="Toggle navigation"
+                    aria-controls="usersDrawer"
+                    aria-expanded="false">
+                <svg id="usersMenuIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5" aria-hidden="true">
+                    <line x1="4" x2="20" y1="12" y2="12"></line>
+                    <line x1="4" x2="20" y1="6" y2="6"></line>
+                    <line x1="4" x2="20" y1="18" y2="18"></line>
+                </svg>
+                <svg id="usersCloseIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 hidden" aria-hidden="true">
+                    <path d="M18 6 6 18"></path>
+                    <path d="m6 6 12 12"></path>
+                </svg>
+            </button>
+
+            <a asp-area="Users" asp-controller="Home" asp-action="Index" class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-white text-black grid place-items-center font-black text-sm">AI</div>
+                <span class="font-bold tracking-tight text-white">AITrainersHub</span>
+            </a>
+        </div>
+
+        <nav class="hidden md:flex items-center gap-1 text-sm">
+            <button type="button"
+                    data-placeholder="Explore is coming soon."
+                    class="px-3 py-1.5 rounded-full text-gray-400 hover:text-white hover:bg-white/5 flex items-center gap-1.5 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+                </svg>
+                Explore
+            </button>
+            <button type="button"
+                    data-placeholder="Opportunities are coming soon."
+                    class="px-3 py-1.5 rounded-full text-gray-400 hover:text-white hover:bg-white/5 flex items-center gap-1.5 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
+                    <rect width="20" height="14" x="2" y="7" rx="2" ry="2"></rect>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                </svg>
+                Opportunities
+            </button>
+            <a asp-area="Leader" asp-controller="Home" asp-action="Index" class="px-3 py-1.5 rounded-full bg-white/10 text-white flex items-center gap-1.5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
+                    <rect width="7" height="9" x="3" y="3" rx="1"></rect>
+                    <rect width="7" height="5" x="14" y="3" rx="1"></rect>
+                    <rect width="7" height="9" x="14" y="12" rx="1"></rect>
+                    <rect width="7" height="5" x="3" y="16" rx="1"></rect>
+                </svg>
+                Dashboard
+            </a>
+            @if (isAdmin)
+            {
+                <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="px-3 py-1.5 rounded-full text-gray-400 hover:text-white hover:bg-white/5">Admin</a>
+            }
+        </nav>
+
+        <div class="flex items-center gap-2">
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <span class="hidden sm:inline text-sm text-gray-400">@displayName</span>
+                <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "Users" })" method="post" class="inline-flex">
+                    <button type="submit" class="inline-flex items-center gap-1.5 h-9 px-4 rounded-full text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" x2="9" y1="12" y2="12"></line>
+                        </svg>
+                        Out
+                    </button>
+                </form>
+            }
+            else
+            {
+                <a asp-area="Identity" asp-page="/Account/Login" class="hidden sm:inline-flex items-center justify-center h-9 px-4 rounded-full text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors">Sign in</a>
+                <button type="button"
+                        data-placeholder="Registration is not available yet."
+                        class="inline-flex items-center justify-center h-9 px-4 rounded-full text-sm font-semibold bg-white text-black hover:bg-gray-100 transition-colors">
+                    Sign up
+                </button>
+            }
+        </div>
+    </div>
+</header>

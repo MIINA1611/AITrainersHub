@@ -1,0 +1,19 @@
+@{
+    var activeTab = ViewData["ReferenceTab"] as string ?? "categories";
+
+    string TabClass(string tab) => string.Equals(activeTab, tab, StringComparison.OrdinalIgnoreCase)
+        ? "admin-tab is-active"
+        : "admin-tab";
+}
+
+<div class="admin-tabs" role="tablist" aria-label="Reference data sections">
+    <a asp-area="Admin" asp-controller="Categories" asp-action="Index" class="@TabClass("categories")" role="tab">
+        Categories
+    </a>
+    <a asp-area="Admin" asp-controller="ReferenceData" asp-action="PaymentMethods" class="@TabClass("payments")" role="tab">
+        Payment Methods
+    </a>
+    <a asp-area="Admin" asp-controller="ReferenceData" asp-action="Countries" class="@TabClass("countries")" role="tab">
+        Countries
+    </a>
+</div>
