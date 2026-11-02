@@ -1,4 +1,7 @@
 using AITrainersHub.Application.Features.Platform.DTOs;
+using AITrainersHub.Application.Features.PlatformCategory.DTOs;
+using AITrainersHub.Application.Features.PlatformCountry.DTOs;
+using AITrainersHub.Application.Features.PlatformPaymentMethod.DTOs;
 using AITrainersHub.Application.Features.Platform.Queries;
 using AITrainersHub.Application.Interfaces;
 using MediatR;
@@ -51,7 +54,40 @@ namespace AITrainersHub.Application.Features.Platform.Handlers.QueriesHandlers
                     WebsiteUrl = p.WebsiteUrl,
                     ReferralLink = p.ReferralLink,
                     Status = p.Status,
-                    CreatedAt = p.CreatedAt
+                    CreatedAt = p.CreatedAt,
+                    Categories = p.PlatformCategories
+                        .OrderBy(pc => pc.Category.Name)
+                        .Select(pc => new PlatformCategoryDto
+                        {
+                            CategoryId = pc.CategoryId,
+                            Name = pc.Category.Name,
+                            Description = pc.Category.Description
+                        })
+                        .ToList(),
+                    PaymentMethods = p.PlatformPaymentMethods
+                        .OrderBy(ppm => ppm.PaymentMethod.Name)
+                        .Select(ppm => new PlatformPaymentMethodDto
+                        {
+                            PaymentMethodId = ppm.PaymentMethodId,
+                            Name = ppm.PaymentMethod.Name
+                        })
+                        .ToList(),
+                    Countries = p.PlatformCountries
+                        .OrderBy(pc => pc.Country.NameEn)
+                        .Select(pc => new PlatformCountryDto
+                        {
+                            CountryId = pc.CountryId,
+                            NameAr = pc.Country.NameAr,
+                            NameEn = pc.Country.NameEn,
+                            IsoCode = pc.Country.IsoCode,
+                            IsFullySupported = pc.IsFullySupported,
+                            Notes = pc.Notes
+                        })
+                        .ToList(),
+                    ReviewCount = p.Reviews.Count(r => r.IsApproved),
+                    AverageRating = p.Reviews.Any(r => r.IsApproved)
+                        ? p.Reviews.Where(r => r.IsApproved).Average(r => (double)r.Rating)
+                        : 0
                 })
                 .ToListAsync(cancellationToken);
         }

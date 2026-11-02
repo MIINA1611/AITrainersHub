@@ -1,0 +1,17 @@
+@model LeaderOpportunityFormViewModel
+@{
+    ViewData["Title"] = "Edit Opportunity";
+}
+
+<div class="admin-page-header">
+    <div>
+        <h2 class="admin-page-title">Edit Opportunity</h2>
+        <p class="admin-page-subtitle">Update the details below. Approval state is managed by the administrator.</p>
+    </div>
+
+    <div class="admin-page-actions">
+        <a asp-area="Leader" asp-controller="Home" asp-action="Index" class="admin-btn admin-btn--ghost">Back to dashboard</a>
+    </div>
+</div>
+
+<partial name="_OpportunityForm" model="Model" />

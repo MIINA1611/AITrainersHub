@@ -28,7 +28,14 @@ namespace AITrainersHub.Application.Features.WorkOpportunity.Handlers.CommandsHa
                 throw new ResultException($"Work opportunity with Id {request.Id} not found.", (int)HttpStatusCode.NotFound);
             }
 
+            if (request.PlatformId.HasValue &&
+                !await context.Platforms.AnyAsync(p => p.Id == request.PlatformId.Value, cancellationToken))
+            {
+                throw new ResultException($"Platform with Id {request.PlatformId} not found.", (int)HttpStatusCode.NotFound);
+            }
+
             workOpportunity.Update(
+                request.PlatformId,
                 request.Title,
                 request.DescriptionAr,
                 request.DescriptionEn,
@@ -39,16 +46,40 @@ namespace AITrainersHub.Application.Features.WorkOpportunity.Handlers.CommandsHa
             context.WorkOpportunities.Update(workOpportunity);
             await context.SaveChangesAsync(cancellationToken);
 
+            var platform = await context.Platforms
+                .AsNoTracking()
+                .Where(p => p.Id == workOpportunity.PlatformId)
+                .Select(p => new { p.Name, p.Slug })
+                .FirstOrDefaultAsync(cancellationToken);
+
+            var leaderName = await context.Users
+                .AsNoTracking()
+                .Where(u => u.Id == workOpportunity.LeaderId)
+                .Select(u => u.DisplayName ?? u.UserName ?? string.Empty)
+                .FirstOrDefaultAsync(cancellationToken);
+
             WorkOpportunityCacheKeys.AddListCacheKeys(request.CacheKeySet, workOpportunity.LeaderId);
             request.CacheKeySet.Add($"{nameof(ReadWorkOpportunityByIdQuery)}_{workOpportunity.Id}");
 
-            return Map(workOpportunity);
+            return Map(
+                workOpportunity,
+                platform?.Name ?? string.Empty,
+                platform?.Slug ?? string.Empty,
+                leaderName ?? string.Empty);
         }
 
-        private static WorkOpportunityDto Map(WorkOpportunityEntity workOpportunity) => new()
+        private static WorkOpportunityDto Map(
+            WorkOpportunityEntity workOpportunity,
+            string platformName,
+            string platformSlug,
+            string leaderDisplayName) => new()
         {
             Id = workOpportunity.Id,
             LeaderId = workOpportunity.LeaderId,
+            LeaderDisplayName = leaderDisplayName,
+            PlatformId = workOpportunity.PlatformId,
+            PlatformName = platformName,
+            PlatformSlug = platformSlug,
             Title = workOpportunity.Title,
             DescriptionAr = workOpportunity.DescriptionAr,
             DescriptionEn = workOpportunity.DescriptionEn,

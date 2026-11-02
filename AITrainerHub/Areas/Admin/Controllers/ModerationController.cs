@@ -43,19 +43,28 @@ namespace AITrainerHub.Area.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string? tab, CancellationToken cancellationToken)
         {
-            var opportunitiesTask = _mediator.Send(new ReadPendingWorkOpportunitiesQuery(), cancellationToken);
-            var suggestionsTask = _mediator.Send(new ReadPlatformSuggestionsQuery(false), cancellationToken);
-            var videoGuidesTask = _mediator.Send(new ReadPendingVideoGuidesQuery(), cancellationToken);
-            var reviewsTask = _mediator.Send(new ReadPendingReviewsQuery(), cancellationToken);
+            var opportunities = await _mediator.Send(
+                new ReadPendingWorkOpportunitiesQuery(),
+                cancellationToken);
 
-            await Task.WhenAll(opportunitiesTask, suggestionsTask, videoGuidesTask, reviewsTask);
+            var suggestions = await _mediator.Send(
+                new ReadPlatformSuggestionsQuery(false),
+                cancellationToken);
+
+            var videoGuides = await _mediator.Send(
+                new ReadPendingVideoGuidesQuery(),
+                cancellationToken);
+
+            var reviews = await _mediator.Send(
+                new ReadPendingReviewsQuery(),
+                cancellationToken);
 
             var model = new ModerationQueueViewModel
             {
-                Opportunities = await opportunitiesTask,
-                Suggestions = await suggestionsTask,
-                VideoGuides = await videoGuidesTask,
-                Reviews = await reviewsTask,
+                Opportunities = opportunities,
+                Suggestions = suggestions,
+                VideoGuides = videoGuides,
+                Reviews = reviews,
                 ActiveTab = tab is not null && AllowedTabs.Contains(tab) ? tab : "opportunities"
             };
 

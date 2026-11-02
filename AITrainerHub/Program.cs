@@ -3,6 +3,7 @@ using AITrainerHub.Services;
 using huzcodes.Extensions.Exceptions;
 using Microsoft.AspNetCore.HttpOverrides;
 using AITrainersHub.Application;
+using FluentValidation;
 
 namespace AITrainerHub
 {
@@ -21,6 +22,7 @@ namespace AITrainerHub
             builder.AddLimiter();
             builder.AddCacheService();        
             builder.Services.AddApplicationRegistration();
+            builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 
             var app = builder.Build();
 

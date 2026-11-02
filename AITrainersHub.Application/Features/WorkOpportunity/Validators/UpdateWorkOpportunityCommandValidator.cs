@@ -13,6 +13,10 @@ namespace AITrainersHub.Application.Features.WorkOpportunity.Validators
             RuleFor(x => x.Id)
                 .NotEmpty().WithMessage("Opportunity Id is required.");
 
+            RuleFor(x => x.PlatformId)
+                .Must(platformId => !platformId.HasValue || platformId.Value != Guid.Empty)
+                .WithMessage("Platform is invalid.");
+
             RuleFor(x => x.Title)
                 .NotEmpty().WithMessage("Opportunity title cannot be empty.")
                 .MaximumLength(150).WithMessage("Opportunity title must not exceed 150 characters.")

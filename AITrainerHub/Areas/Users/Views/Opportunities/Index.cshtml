@@ -1,0 +1,108 @@
+@model OpportunitiesIndexViewModel
+@{
+    ViewData["Title"] = "Opportunities";
+
+    var routeValues = new Dictionary<string, string>();
+    if (!string.IsNullOrWhiteSpace(Model.Platform))
+    {
+        routeValues["platform"] = Model.Platform;
+    }
+    if (!string.IsNullOrWhiteSpace(Model.Search))
+    {
+        routeValues["search"] = Model.Search;
+    }
+
+    var pagination = new PaginationViewModel
+    {
+        Area = "Users",
+        Controller = "Opportunities",
+        Action = "Index",
+        Page = Model.Page,
+        TotalPages = Model.TotalPages,
+        TotalCount = Model.TotalCount,
+        PageSize = Model.PageSize,
+        RouteValues = routeValues
+    };
+}
+
+<div class="users-page">
+    <div class="admin-page-header">
+        <div>
+            <p class="users-hero__eyebrow">Opportunity board</p>
+            <h1 class="admin-page-title">Live AI training opportunities</h1>
+            <p class="admin-page-subtitle">
+                Every opportunity below was shared by a leader and approved by an administrator.
+                Apply directly with the leader on WhatsApp.
+            </p>
+        </div>
+
+        <div class="admin-page-actions">
+            <a asp-area="Users" asp-controller="Platforms" asp-action="Index" class="admin-btn admin-btn--ghost">Browse platforms</a>
+        </div>
+    </div>
+
+    <form asp-area="Users" asp-controller="Opportunities" asp-action="Index" method="get" class="users-filter-card" role="search">
+        <div class="users-filter-grid">
+            <div class="admin-field users-filter-search">
+                <label for="opportunitySearch" class="admin-label">Search</label>
+                <input id="opportunitySearch" name="search" type="search" value="@Model.Search" class="admin-input"
+                       placeholder="Title, description, leader or platform" />
+            </div>
+
+            <div class="admin-field">
+                <label for="opportunityPlatform" class="admin-label">Platform</label>
+                <select id="opportunityPlatform" name="platform" class="admin-select" data-auto-submit>
+                    <option value="">All platforms</option>
+                    @foreach (var platform in Model.Platforms)
+                    {
+                        var platformValue = platform.Id.ToString();
+                        if (string.Equals(Model.Platform, platformValue, StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals(Model.Platform, platform.Slug, StringComparison.OrdinalIgnoreCase))
+                        {
+                            <option value="@platformValue" selected>@platform.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@platformValue">@platform.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="users-filter-actions">
+                <button type="submit" class="admin-btn admin-btn--primary">Apply filters</button>
+                @if (!string.IsNullOrWhiteSpace(Model.Platform) || !string.IsNullOrWhiteSpace(Model.Search))
+                {
+                    <a asp-area="Users" asp-controller="Opportunities" asp-action="Index" class="admin-btn admin-btn--ghost">Clear</a>
+                }
+            </div>
+        </div>
+    </form>
+
+    <div class="users-results-head">
+        <span>@Model.TotalCount opportunit@(Model.TotalCount == 1 ? "y" : "ies") found</span>
+        @if (!string.IsNullOrWhiteSpace(Model.Platform) || !string.IsNullOrWhiteSpace(Model.Search))
+        {
+            <a asp-area="Users" asp-controller="Opportunities" asp-action="Index" class="users-section__link">Clear filters</a>
+        }
+    </div>
+
+    @if (Model.Opportunities.Count == 0)
+    {
+        <div class="users-empty">
+            <p>No live opportunities match these filters.</p>
+            <a asp-area="Users" asp-controller="Opportunities" asp-action="Index" class="admin-btn admin-btn--ghost admin-btn--sm">Reset filters</a>
+        </div>
+    }
+    else
+    {
+        <div class="users-card-grid">
+            @foreach (var opportunity in Model.Opportunities)
+            {
+                <partial name="_OpportunityCard" model="opportunity" />
+            }
+        </div>
+    }
+
+    <partial name="_Pagination" model="pagination" />
+</div>

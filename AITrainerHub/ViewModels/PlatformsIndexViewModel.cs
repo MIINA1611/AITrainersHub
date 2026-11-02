@@ -1,4 +1,4 @@
-using PlatformStatus = AITrainersHub.Domain.Enums.PlatfromStatus.PlatformStatus;
+﻿using PlatformStatus = AITrainersHub.Domain.Enums.PlatfromStatus.PlatformStatus;
 
 namespace AITrainerHub.ViewModels
 {

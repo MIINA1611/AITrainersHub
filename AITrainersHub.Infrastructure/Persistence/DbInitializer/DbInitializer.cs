@@ -8,7 +8,7 @@ namespace AITrainersHub.Infrastructure.DbInitializer
     {
         public static async Task SeedDataAsync(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
         {
-            string[] roleNames = { Helpers.AdminRole, Helpers.LeaderRole };
+            string[] roleNames = { Helpers.AdminRole, Helpers.LeaderRole, Helpers.UserRole };
             foreach (var roleName in roleNames)
             {
                 if (!await roleManager.RoleExistsAsync(roleName))

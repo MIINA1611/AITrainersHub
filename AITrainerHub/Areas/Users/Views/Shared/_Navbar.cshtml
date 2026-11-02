@@ -7,6 +7,11 @@
     var displayName = currentUser?.DisplayName ?? User.Identity?.Name ?? "Guest";
     var isLeader = User.IsInRole("Leader");
     var isAdmin = User.IsInRole("Admin");
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
+
+    string NavClass(string controller) => string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase)
+        ? "px-3 py-1.5 rounded-full bg-white text-black font-medium flex items-center gap-1.5"
+        : "px-3 py-1.5 rounded-full text-gray-400 hover:text-white hover:bg-white/5 flex items-center gap-1.5 transition-colors";
 }
 <header class="sticky top-0 z-40 backdrop-blur-xl bg-black/40 border-b border-white/5">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
@@ -35,24 +40,27 @@
         </div>
 
         <nav class="hidden md:flex items-center gap-1 text-sm">
-            <button type="button"
-                    data-placeholder="Explore is coming soon."
-                    class="px-3 py-1.5 rounded-full text-gray-400 hover:text-white hover:bg-white/5 flex items-center gap-1.5 transition-colors">
+            <a asp-area="Users" asp-controller="Platforms" asp-action="Index" class="@NavClass("Platforms")">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
                 </svg>
-                Explore
-            </button>
-            <button type="button"
-                    data-placeholder="Opportunities are coming soon."
-                    class="px-3 py-1.5 rounded-full text-gray-400 hover:text-white hover:bg-white/5 flex items-center gap-1.5 transition-colors">
+                Platforms
+            </a>
+            <a asp-area="Users" asp-controller="Opportunities" asp-action="Index" class="@NavClass("Opportunities")">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
                     <rect width="20" height="14" x="2" y="7" rx="2" ry="2"></rect>
                     <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                 </svg>
                 Opportunities
-            </button>
+            </a>
+            <a asp-area="Users" asp-controller="Suggestions" asp-action="Create" class="@NavClass("Suggestions")">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
+                    <path d="M12 3v18"></path>
+                    <path d="M3 12h18"></path>
+                </svg>
+                Suggest
+            </a>
 
             @if (isLeader)
             {
@@ -63,7 +71,7 @@
                         <rect width="7" height="9" x="14" y="12" rx="1"></rect>
                         <rect width="7" height="5" x="3" y="16" rx="1"></rect>
                     </svg>
-                    Dashboard
+                    Leader
                 </a>
             }
 
@@ -84,18 +92,14 @@
                             <polyline points="16 17 21 12 16 7"></polyline>
                             <line x1="21" x2="9" y1="12" y2="12"></line>
                         </svg>
-                        Out
+                        Sign out
                     </button>
                 </form>
             }
             else
             {
                 <a asp-area="Identity" asp-page="/Account/Login" class="hidden sm:inline-flex items-center justify-center h-9 px-4 rounded-full text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors">Sign in</a>
-                <button type="button"
-                        data-placeholder="Registration is not available yet."
-                        class="inline-flex items-center justify-center h-9 px-4 rounded-full text-sm font-semibold bg-white text-black hover:bg-gray-100 transition-colors">
-                    Sign up
-                </button>
+                <a asp-area="Identity" asp-page="/Account/Register" class="inline-flex items-center justify-center h-9 px-4 rounded-full text-sm font-semibold bg-white text-black hover:bg-gray-100 transition-colors">Sign up</a>
             }
         </div>
     </div>

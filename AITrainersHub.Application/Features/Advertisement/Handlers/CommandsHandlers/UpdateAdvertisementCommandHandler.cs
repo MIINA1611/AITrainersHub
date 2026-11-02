@@ -38,6 +38,14 @@ namespace AITrainersHub.Application.Features.Advertisement.Handlers.CommandsHand
                 request.StartDate,
                 request.EndDate);
 
+            if (request.UpdateSchedule)
+            {
+                // The entity update keeps the previous value when a date is null.
+                // The edit form needs to clear optional dates, so assign directly.
+                advertisement.StartDate = request.StartDate;
+                advertisement.EndDate = request.EndDate;
+            }
+
             context.Advertisements.Update(advertisement);
             await context.SaveChangesAsync(cancellationToken);
 

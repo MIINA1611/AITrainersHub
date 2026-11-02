@@ -1,3 +1,6 @@
+using AITrainersHub.Application.Features.PlatformCategory.DTOs;
+using AITrainersHub.Application.Features.PlatformCountry.DTOs;
+using AITrainersHub.Application.Features.PlatformPaymentMethod.DTOs;
 using PlatformStatus = AITrainersHub.Domain.Enums.PlatfromStatus.PlatformStatus;
 
 namespace AITrainersHub.Application.Features.Platform.DTOs
@@ -16,5 +19,11 @@ namespace AITrainersHub.Application.Features.Platform.DTOs
         public string? ReferralLink { get; set; }
         public PlatformStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
+
+        public List<PlatformCategoryDto> Categories { get; set; } = new();
+        public List<PlatformPaymentMethodDto> PaymentMethods { get; set; } = new();
+        public List<PlatformCountryDto> Countries { get; set; } = new();
+        public double AverageRating { get; set; }
+        public int ReviewCount { get; set; }
     }
 }

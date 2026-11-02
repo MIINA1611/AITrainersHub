@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using AITrainersHub.Domain.Enums;
 using AITrainersHub.Domain.Models;
 
 namespace AITrainerHub.Areas.Identity.Pages.Account
@@ -127,6 +128,29 @@ namespace AITrainerHub.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+
+                    var isDefaultReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ||
+                                             returnUrl == "/" ||
+                                             string.Equals(
+                                                 returnUrl,
+                                                 Url.Content("~/"),
+                                                 StringComparison.OrdinalIgnoreCase);
+
+                    if (isDefaultReturnUrl && user is not null)
+                    {
+                        if (await _userManager.IsInRoleAsync(user, Helpers.AdminRole))
+                        {
+                            return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                        }
+
+                        if (await _userManager.IsInRoleAsync(user, Helpers.LeaderRole))
+                        {
+                            return RedirectToAction("Index", "Home", new { area = "Leader" });
+                        }
+
+                        return RedirectToAction("Index", "Home", new { area = "Users" });
+                    }
+
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

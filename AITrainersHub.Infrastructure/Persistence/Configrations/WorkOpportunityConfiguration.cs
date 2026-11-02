@@ -24,6 +24,11 @@ namespace AITrainersHub.Infrastructure.Persistence.Configurations
                 .WithMany()
                 .HasForeignKey(o => o.LeaderId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(o => o.Platform)
+                .WithMany()
+                .HasForeignKey(o => o.PlatformId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

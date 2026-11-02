@@ -7,6 +7,11 @@
     var displayName = currentUser?.DisplayName ?? User.Identity?.Name ?? "Guest";
     var isLeader = User.IsInRole("Leader");
     var isAdmin = User.IsInRole("Admin");
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
+
+    string LinkClass(string controller) => string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase)
+        ? "flex items-center gap-3 px-3 py-2 rounded-lg bg-white/10 text-white font-medium"
+        : "flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5";
 }
 <div id="usersDrawer" class="fixed inset-0 z-50 md:hidden hidden" role="dialog" aria-modal="true" aria-label="Navigation">
     <button type="button" class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-users-drawer-close aria-label="Close navigation"></button>
@@ -26,27 +31,34 @@
         </div>
 
         <nav class="flex-1 overflow-auto p-3 flex flex-col gap-1 text-sm">
-            <a asp-area="Users" asp-controller="Home" asp-action="Index" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/10 text-white font-medium">
+            <a asp-area="Users" asp-controller="Home" asp-action="Index" class="@LinkClass("Home")">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
                     <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                     <polyline points="9 22 9 12 15 12 15 22"></polyline>
                 </svg>
                 Home
             </a>
-            <button type="button" data-placeholder="Explore is coming soon." class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 text-right">
+            <a asp-area="Users" asp-controller="Platforms" asp-action="Index" class="@LinkClass("Platforms")">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
                 </svg>
-                Explore
-            </button>
-            <button type="button" data-placeholder="Opportunities are coming soon." class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 text-right">
+                Platforms
+            </a>
+            <a asp-area="Users" asp-controller="Opportunities" asp-action="Index" class="@LinkClass("Opportunities")">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
                     <rect width="20" height="14" x="2" y="7" rx="2" ry="2"></rect>
                     <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                 </svg>
                 Opportunities
-            </button>
+            </a>
+            <a asp-area="Users" asp-controller="Suggestions" asp-action="Create" class="@LinkClass("Suggestions")">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
+                    <path d="M12 3v18"></path>
+                    <path d="M3 12h18"></path>
+                </svg>
+                Suggest a platform
+            </a>
 
             @if (isLeader)
             {
@@ -96,15 +108,15 @@
                     </svg>
                     Sign in
                 </a>
-                <button type="button" data-placeholder="Registration is not available yet." class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 text-right">
+                <a asp-area="Identity" asp-page="/Account/Register" class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
                         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                         <circle cx="9" cy="7" r="4"></circle>
                         <line x1="19" x2="19" y1="8" y2="14"></line>
                         <line x1="22" x2="16" y1="11" y2="11"></line>
                     </svg>
-                    Sign up
-                </button>
+                    Create account
+                </a>
             }
         </nav>
     </aside>

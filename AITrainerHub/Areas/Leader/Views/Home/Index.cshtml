@@ -1,49 +1,136 @@
+@model LeaderDashboardViewModel
 @{
     ViewData["Title"] = "Leader Dashboard";
 }
 
-<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-    <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
-        <div>
-            <p class="text-xs tracking-widest uppercase text-purple-400 font-semibold">Leader area</p>
-            <h1 class="text-3xl font-bold mt-1">Leader Dashboard</h1>
-        </div>
-        <span class="inline-flex items-center rounded-full border border-amber-500/20 bg-amber-500/10 text-amber-400 px-3 py-1 text-xs font-semibold">Coming soon</span>
+<div class="admin-page-header">
+    <div>
+        <h2 class="admin-page-title">Welcome back, @Model.DisplayName</h2>
+        <p class="admin-page-subtitle">Manage the opportunities you share with the AITrainersHub community.</p>
     </div>
 
-    <div class="rounded-2xl border border-white/10 bg-black/40 p-6 sm:p-8">
-        <p class="text-gray-400 leading-relaxed">
-            Post work opportunities for the community. They go live after admin approval.
-        </p>
+    <div class="admin-page-actions">
+        <a asp-area="Leader" asp-controller="Opportunities" asp-action="Create" class="admin-btn admin-btn--primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
+                <path d="M12 5v14"></path>
+                <path d="M5 12h14"></path>
+            </svg>
+            New Opportunity
+        </a>
+    </div>
+</div>
 
-        <div class="mt-6 rounded-xl border border-dashed border-white/15 bg-white/[0.06] p-5">
-            <div class="flex items-start gap-3">
-                <div class="p-2 inline-flex rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6" aria-hidden="true">
-                        <rect width="20" height="14" x="2" y="7" rx="2" ry="2"></rect>
-                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                    </svg>
-                </div>
-                <div>
-                    <h2 class="font-semibold">Opportunity posting is on the way</h2>
-                    <p class="text-sm text-gray-400 mt-1">
-                        The leader queue and posting workflow will be enabled after the CQRS backend is implemented. This shell is ready for that next step.
-                    </p>
-                </div>
-            </div>
-        </div>
+@if (Model.Pending > 0)
+{
+    <div class="admin-alert admin-alert--info admin-alert--page" role="status">
+        @Model.Pending opportunit@(Model.Pending == 1 ? "y is" : "ies are") waiting for administrator approval.
+        @(Model.Pending == 1 ? "It will appear" : "They will appear") on the public board once approved.
+    </div>
+}
 
-        <div class="mt-6 flex flex-wrap gap-3">
-            <a asp-area="Users" asp-controller="Home" asp-action="Index" class="inline-flex items-center gap-2 h-10 px-5 rounded-full bg-white text-black font-semibold text-sm hover:bg-gray-100 transition-colors">
-                Back to directory
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
-                    <path d="M5 12h14"></path>
-                    <path d="m12 5 7 7-7 7"></path>
-                </svg>
-            </a>
-            <button type="button" data-placeholder="Leader tools are coming soon." class="inline-flex items-center h-10 px-5 rounded-full border border-white/10 text-sm text-white hover:bg-white/5 transition-colors">
-                Explore leader tools
-            </button>
+<div class="admin-grid admin-grid--cards">
+    <div class="admin-stat">
+        <span class="admin-stat__label">Total Opportunities</span>
+        <span class="admin-stat__value">@Model.Total</span>
+        <span class="admin-stat__hint">Everything you have created</span>
+    </div>
+
+    <div class="admin-stat">
+        <span class="admin-stat__label">Live</span>
+        <span class="admin-stat__value">@Model.Live</span>
+        <span class="admin-stat__hint">Approved and visible to the public</span>
+    </div>
+
+    <div class="admin-stat">
+        <span class="admin-stat__label">Pending Review</span>
+        <span class="admin-stat__value">@Model.Pending</span>
+        <span class="admin-stat__hint">Waiting for administrator approval</span>
+    </div>
+
+    <div class="admin-stat">
+        <span class="admin-stat__label">Hidden</span>
+        <span class="admin-stat__value">@Model.Hidden</span>
+        <span class="admin-stat__hint">Approved but currently hidden</span>
+    </div>
+</div>
+
+<div class="admin-card" style="margin-top: 1.5rem;">
+    <div class="admin-card__header">
+        <div>
+            <h3 class="admin-card__title">Your Opportunities</h3>
+            <p class="admin-card__subtitle">Only you can edit or delete the opportunities listed here.</p>
         </div>
+        <span class="admin-badge admin-badge--purple">@Model.Total total</span>
+    </div>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <colgroup>
+                <col style="width: 34%" />
+                <col style="width: 20%" />
+                <col style="width: 13%" />
+                <col style="width: 15%" />
+                <col style="width: 18%" />
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Platform</th>
+                    <th>Status</th>
+                    <th>Created Date</th>
+                    <th class="col-actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Opportunities.Count == 0)
+                {
+                    <tr>
+                        <td colspan="5" class="admin-empty">
+                            You have not created any opportunities yet.
+                            <a asp-area="Leader" asp-controller="Opportunities" asp-action="Create" class="admin-link">Create your first opportunity</a>.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var opportunity in Model.Opportunities)
+                    {
+                        <tr>
+                            <td>
+                                <span class="admin-cell-title">@opportunity.Title</span>
+                                <span class="admin-cell-sub">@DisplayHelpers.Excerpt(DisplayHelpers.PreferredDescription(opportunity.DescriptionAr, opportunity.DescriptionEn), 70)</span>
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(opportunity.PlatformName))
+                                {
+                                    <span class="admin-cell-title">@opportunity.PlatformName</span>
+                                }
+                                else
+                                {
+                                    <span class="admin-muted">No platform</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="admin-badge @DisplayHelpers.OpportunityStatusCss(opportunity)"
+                                      title="@DisplayHelpers.OpportunityStatusTitle(opportunity)">
+                                    @DisplayHelpers.OpportunityStatus(opportunity)
+                                </span>
+                            </td>
+                            <td>@opportunity.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</td>
+                            <td class="col-actions">
+                                <div class="cell-actions">
+                                    <a asp-area="Leader" asp-controller="Opportunities" asp-action="Edit" asp-route-id="@opportunity.Id" class="admin-btn admin-btn--ghost admin-btn--sm">
+                                        Edit
+                                    </a>
+                                    <form asp-area="Leader" asp-controller="Opportunities" asp-action="Delete" asp-route-id="@opportunity.Id" method="post" asp-antiforgery="true" data-confirm="Delete &quot;@opportunity.Title&quot;? This cannot be undone.">
+                                        <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
     </div>
 </div>

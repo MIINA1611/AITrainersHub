@@ -1,0 +1,593 @@
+@model PlatformDetailsViewModel
+@{
+    var platform = Model.Platform;
+    ViewData["Title"] = platform.Name;
+
+    var averageRating = platform.Reviews.Count > 0 ? platform.Reviews.Average(review => review.Rating) : 0;
+    var filledStars = (int)Math.Round(averageRating, MidpointRounding.AwayFromZero);
+    var returnUrl = Context.Request.Path.ToString();
+    var platformKey = string.IsNullOrWhiteSpace(platform.Slug) ? platform.Id.ToString() : platform.Slug;
+}
+
+<div class="users-page">
+    <nav class="users-breadcrumb" aria-label="Breadcrumb">
+        <a asp-area="Users" asp-controller="Platforms" asp-action="Index">Platforms</a>
+        <span aria-hidden="true">/</span>
+        <span>@platform.Name</span>
+    </nav>
+
+    <div class="users-detail-layout">
+        <div class="users-detail-main">
+            <section class="users-detail-hero">
+                <div class="users-detail-hero__head">
+                    <span class="users-detail-hero__avatar">@DisplayHelpers.Initials(platform.Name)</span>
+
+                    <div class="users-detail-hero__identity">
+                        <div class="users-detail-hero__title-row">
+                            <h1 class="users-detail-hero__title">@platform.Name</h1>
+                            <span class="admin-badge @DisplayHelpers.PlatformStatusCss(platform.Status)">@platform.Status</span>
+                        </div>
+                        <p class="users-detail-hero__slug">@("@" + platform.Slug)</p>
+
+                        <div class="users-detail-hero__meta">
+                            <span class="users-rating">
+                                <span class="users-stars" aria-hidden="true">
+                                    @for (var star = 1; star <= 5; star++)
+                                    {
+                                        @(star <= filledStars ? "★" : "☆")
+                                    }
+                                </span>
+                                <span class="users-rating__value">@DisplayHelpers.Rating(averageRating)</span>
+                                <span class="users-muted">(@platform.Reviews.Count review@(platform.Reviews.Count == 1 ? "" : "s"))</span>
+                            </span>
+                            <span class="users-meta-dot" aria-hidden="true"></span>
+                            <span class="users-muted">@platform.Countries.Count countr@(platform.Countries.Count == 1 ? "y" : "ies")</span>
+                            <span class="users-meta-dot" aria-hidden="true"></span>
+                            <span class="users-muted">@platform.PaymentMethods.Count payout method@(platform.PaymentMethods.Count == 1 ? "" : "s")</span>
+                        </div>
+                    </div>
+
+                    <div class="users-detail-hero__actions">
+                        <a href="@platform.WebsiteUrl" target="_blank" rel="noopener noreferrer" class="admin-btn admin-btn--primary">Visit website</a>
+                        @if (!string.IsNullOrWhiteSpace(platform.ReferralLink))
+                        {
+                            <a href="@platform.ReferralLink" target="_blank" rel="noopener noreferrer nofollow" class="admin-btn admin-btn--ghost">Referral link</a>
+                        }
+                    </div>
+                </div>
+            </section>
+
+            <div class="users-tab-shell" data-users-tab-group>
+                <div class="admin-tabs" role="tablist" aria-label="Platform sections">
+                    <button type="button" class="admin-tab is-active" data-users-tab="overview" role="tab" aria-selected="true">
+                        Overview
+                    </button>
+                    <button type="button" class="admin-tab" data-users-tab="guides" role="tab" aria-selected="false">
+                        Video guides <span class="admin-tab__count">@platform.VideoGuides.Count</span>
+                    </button>
+                    <button type="button" class="admin-tab" data-users-tab="reviews" role="tab" aria-selected="false">
+                        Reviews <span class="admin-tab__count">@platform.Reviews.Count</span>
+                    </button>
+                    <button type="button" class="admin-tab" data-users-tab="opportunities" role="tab" aria-selected="false">
+                        Opportunities <span class="admin-tab__count">@Model.RelatedOpportunities.Count</span>
+                    </button>
+                </div>
+
+                <section class="users-tab-panel" data-users-tab-panel="overview" role="tabpanel">
+                    <div class="admin-card">
+                        <div class="admin-card__header">
+                            <div>
+                                <h2 class="admin-card__title">About @platform.Name</h2>
+                                <p class="admin-card__subtitle">Official overview and platform facts.</p>
+                            </div>
+                        </div>
+                        <div class="admin-card__body">
+                            @if (!string.IsNullOrWhiteSpace(platform.DescriptionEn))
+                            {
+                                <p class="users-prose">@platform.DescriptionEn</p>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(platform.DescriptionAr))
+                            {
+                                <p class="users-prose" dir="rtl" lang="ar">@platform.DescriptionAr</p>
+                            }
+                            @if (string.IsNullOrWhiteSpace(platform.DescriptionEn) && string.IsNullOrWhiteSpace(platform.DescriptionAr))
+                            {
+                                <p class="users-muted">No description has been added for this platform yet.</p>
+                            }
+
+                            @if (platform.Categories.Count > 0)
+                            {
+                                <div class="users-subsection">
+                                    <h3 class="users-subsection__title">Categories</h3>
+                                    <div class="users-chip-list">
+                                        @foreach (var category in platform.Categories)
+                                        {
+                                            <a asp-area="Users"
+                                               asp-controller="Platforms"
+                                               asp-action="Index"
+                                               asp-route-category="@category.CategoryId"
+                                               class="users-chip">@category.Name</a>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="admin-card users-detail-section">
+                        <div class="admin-card__header">
+                            <div>
+                                <h2 class="admin-card__title">Supported countries</h2>
+                                <p class="admin-card__subtitle">Where this platform accepts AI trainers.</p>
+                            </div>
+                            <span class="admin-badge admin-badge--gray">@platform.Countries.Count total</span>
+                        </div>
+
+                        <div class="admin-table-wrap">
+                            <table class="admin-table">
+                                <colgroup>
+                                    <col style="width: 32%" />
+                                    <col style="width: 14%" />
+                                    <col style="width: 18%" />
+                                    <col style="width: 36%" />
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th>Country</th>
+                                        <th>ISO</th>
+                                        <th>Support</th>
+                                        <th>Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (platform.Countries.Count == 0)
+                                    {
+                                        <tr>
+                                            <td colspan="4" class="admin-empty">No country information has been added yet.</td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var country in platform.Countries)
+                                        {
+                                            var countryName = string.IsNullOrWhiteSpace(country.NameEn) ? country.NameAr : country.NameEn;
+                                            <tr>
+                                                <td><span class="admin-cell-title">@countryName</span></td>
+                                                <td><span class="admin-ltr">@country.IsoCode</span></td>
+                                                <td>
+                                                    @if (country.IsFullySupported)
+                                                    {
+                                                        <span class="admin-badge admin-badge--green">Fully supported</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="admin-badge admin-badge--amber">Limited</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (string.IsNullOrWhiteSpace(country.Notes))
+                                                    {
+                                                        <span class="users-muted">&mdash;</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        @country.Notes
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="admin-card users-detail-section">
+                        <div class="admin-card__header">
+                            <div>
+                                <h2 class="admin-card__title">Payment methods</h2>
+                                <p class="admin-card__subtitle">How this platform pays AI trainers.</p>
+                            </div>
+                        </div>
+                        <div class="admin-card__body">
+                            @if (platform.PaymentMethods.Count == 0)
+                            {
+                                <p class="users-muted">No payout information has been added yet.</p>
+                            }
+                            else
+                            {
+                                <div class="users-chip-list">
+                                    @foreach (var paymentMethod in platform.PaymentMethods)
+                                    {
+                                        <span class="users-chip users-chip--accent">@paymentMethod.Name</span>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="admin-card users-detail-section">
+                        <div class="admin-card__header">
+                            <div>
+                                <h2 class="admin-card__title">Onboarding steps</h2>
+                                <p class="admin-card__subtitle">A clear path from sign-up to your first task.</p>
+                            </div>
+                            <span class="admin-badge admin-badge--gray">@platform.OnboardingSteps.Count step@(platform.OnboardingSteps.Count == 1 ? "" : "s")</span>
+                        </div>
+
+                        <div class="admin-card__body">
+                            @if (platform.OnboardingSteps.Count == 0)
+                            {
+                                <p class="users-muted">Onboarding steps are not available for this platform yet.</p>
+                            }
+                            else
+                            {
+                                <ol class="users-step-list">
+                                    @foreach (var step in platform.OnboardingSteps.OrderBy(item => item.StepNumber))
+                                    {
+                                        var stepTitle = string.IsNullOrWhiteSpace(step.TitleEn) ? step.TitleAr : step.TitleEn;
+                                        var stepCopy = string.IsNullOrWhiteSpace(step.DescriptionEn) ? step.DescriptionAr : step.DescriptionEn;
+                                        <li class="users-step">
+                                            <span class="users-step__number">@step.StepNumber</span>
+                                            <div class="users-step__body">
+                                                <h3 class="users-step__title">@stepTitle</h3>
+                                                @if (!string.IsNullOrWhiteSpace(stepCopy))
+                                                {
+                                                    <p class="users-step__copy">@stepCopy</p>
+                                                }
+                                                @if (!string.IsNullOrWhiteSpace(step.Tip))
+                                                {
+                                                    <p class="users-step__tip"><strong>Tip:</strong> @step.Tip</p>
+                                                }
+                                                @if (!string.IsNullOrWhiteSpace(step.ScreenshotUrl))
+                                                {
+                                                    <a href="@step.ScreenshotUrl" target="_blank" rel="noopener noreferrer" class="users-section__link">View screenshot</a>
+                                                }
+                                            </div>
+                                        </li>
+                                    }
+                                </ol>
+                            }
+                        </div>
+                    </div>
+                </section>
+
+                <section class="users-tab-panel hidden" data-users-tab-panel="guides" role="tabpanel">
+                    <div class="admin-card">
+                        <div class="admin-card__header">
+                            <div>
+                                <h2 class="admin-card__title">Approved video guides</h2>
+                                <p class="admin-card__subtitle">Community walkthroughs that passed moderation.</p>
+                            </div>
+                            <span class="admin-badge admin-badge--purple">@platform.VideoGuides.Count approved</span>
+                        </div>
+
+                        <div class="admin-card__body">
+                            @if (platform.VideoGuides.Count == 0)
+                            {
+                                <div class="users-empty users-empty--inline">
+                                    <p>No approved video guides yet. Be the first to share one.</p>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="users-guide-list">
+                                    @foreach (var guide in platform.VideoGuides.OrderByDescending(item => item.CreatedAt))
+                                    {
+                                        <article class="users-guide">
+                                            <div class="users-guide__head">
+                                                <h3 class="users-guide__title">@guide.Title</h3>
+                                                <span class="admin-badge admin-badge--gray">@guide.Language</span>
+                                            </div>
+                                            <p class="users-guide__meta">
+                                                <span>@guide.SourceType</span>
+                                                @if (!string.IsNullOrWhiteSpace(guide.AuthorOrChannel))
+                                                {
+                                                    <span class="users-meta-dot" aria-hidden="true"></span>
+                                                    <span>@guide.AuthorOrChannel</span>
+                                                }
+                                                @if (guide.PublishedAt.HasValue)
+                                                {
+                                                    <span class="users-meta-dot" aria-hidden="true"></span>
+                                                    <span>@guide.PublishedAt.Value.ToLocalTime().ToString("yyyy-MM-dd")</span>
+                                                }
+                                            </p>
+                                            <a href="@guide.Url" target="_blank" rel="noopener noreferrer" class="admin-btn admin-btn--ghost admin-btn--sm">Watch guide</a>
+                                        </article>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="admin-card users-detail-section">
+                        <div class="admin-card__header">
+                            <div>
+                                <h2 class="admin-card__title">Share a video guide</h2>
+                                <p class="admin-card__subtitle">Approved guides are published on this page.</p>
+                            </div>
+                        </div>
+
+                        <div class="admin-card__body">
+                            @if (!Model.IsAuthenticated)
+                            {
+                                <div class="users-empty users-empty--inline">
+                                    <p>Sign in with an active account to submit a video guide.</p>
+                                    <a asp-area="Identity"
+                                       asp-page="/Account/Login"
+                                       asp-route-returnUrl="@returnUrl"
+                                       class="admin-btn admin-btn--primary admin-btn--sm">Sign in</a>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="admin-alert admin-alert--info users-form-note">
+                                    Video guides are reviewed by an administrator before they appear publicly.
+                                </div>
+
+                                <form asp-area="Users"
+                                      asp-controller="Platforms"
+                                      asp-action="SubmitVideoGuide"
+                                      method="post"
+                                      class="admin-form"
+                                      data-submit-once>
+                                    <input type="hidden" name="PlatformId" value="@platform.Id" />
+
+                                    <div class="admin-grid admin-grid--2">
+                                        <div class="admin-field">
+                                            <label for="guideTitle" class="admin-label">Video title</label>
+                                            <input id="guideTitle" name="Title" class="admin-input" maxlength="200" required
+                                                   value="@Model.VideoGuideForm.Title" placeholder="e.g. Complete onboarding walkthrough" />
+                                        </div>
+
+                                        <div class="admin-field">
+                                            <label for="guideUrl" class="admin-label">Video URL</label>
+                                            <input id="guideUrl" name="Url" type="url" dir="ltr" class="admin-input" maxlength="500" required
+                                                   value="@Model.VideoGuideForm.Url" placeholder="https://www.youtube.com/watch?v=..." />
+                                        </div>
+
+                                        <div class="admin-field">
+                                            <label for="guideLanguage" class="admin-label">Language</label>
+                                            <select id="guideLanguage" name="Language" class="admin-select">
+                                                @if (Model.VideoGuideForm.Language == GuideLanguage.English)
+                                                {
+                                                    <option value="@((int)GuideLanguage.Arabic)">Arabic</option>
+                                                    <option value="@((int)GuideLanguage.English)" selected>English</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@((int)GuideLanguage.Arabic)" selected>Arabic</option>
+                                                    <option value="@((int)GuideLanguage.English)">English</option>
+                                                }
+                                            </select>
+                                        </div>
+
+                                        <div class="admin-field">
+                                            <label for="guideSource" class="admin-label">Source</label>
+                                            <select id="guideSource" name="SourceType" class="admin-select">
+                                                @foreach (var source in new[] { "YouTube", "Vimeo", "Blog", "Other" })
+                                                {
+                                                    if (string.Equals(Model.VideoGuideForm.SourceType, source, StringComparison.OrdinalIgnoreCase))
+                                                    {
+                                                        <option value="@source" selected>@source</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@source">@source</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+
+                                        <div class="admin-field">
+                                            <label for="guideAuthor" class="admin-label">Author or channel</label>
+                                            <input id="guideAuthor" name="AuthorOrChannel" class="admin-input" maxlength="150"
+                                                   value="@Model.VideoGuideForm.AuthorOrChannel" placeholder="Optional" />
+                                        </div>
+
+                                        <div class="admin-field">
+                                            <label for="guidePublished" class="admin-label">Published date</label>
+                                            <input id="guidePublished" name="PublishedAt" type="date" class="admin-input"
+                                                   value="@Model.VideoGuideForm.PublishedAt?.ToString("yyyy-MM-dd")" />
+                                        </div>
+                                    </div>
+
+                                    <div class="admin-actions">
+                                        <button type="submit" class="admin-btn admin-btn--primary">Submit guide for review</button>
+                                    </div>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </section>
+
+                <section class="users-tab-panel hidden" data-users-tab-panel="reviews" role="tabpanel">
+                    <div class="admin-card">
+                        <div class="admin-card__header">
+                            <div>
+                                <h2 class="admin-card__title">Community reviews</h2>
+                                <p class="admin-card__subtitle">Only approved reviews are shown publicly.</p>
+                            </div>
+                            <span class="admin-badge admin-badge--green">
+                                @DisplayHelpers.Rating(averageRating) average
+                            </span>
+                        </div>
+
+                        <div class="admin-card__body">
+                            @if (platform.Reviews.Count == 0)
+                            {
+                                <div class="users-empty users-empty--inline">
+                                    <p>No approved reviews yet. Share your experience to help other trainers.</p>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="users-review-list">
+                                    @foreach (var review in platform.Reviews.OrderByDescending(item => item.CreatedAt))
+                                    {
+                                        <article class="users-review">
+                                            <div class="users-review__head">
+                                                <span class="admin-avatar">@DisplayHelpers.Initials(review.ReviewerName)</span>
+                                                <div class="users-review__identity">
+                                                    <strong>@review.ReviewerName</strong>
+                                                    <span class="users-muted">@review.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</span>
+                                                </div>
+                                                <span class="users-stars" aria-label="@review.Rating out of 5 stars">
+                                                    @for (var star = 1; star <= 5; star++)
+                                                    {
+                                                        @(star <= review.Rating ? "★" : "☆")
+                                                    }
+                                                </span>
+                                            </div>
+                                            <p class="users-review__copy">@review.Comment</p>
+                                        </article>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="admin-card users-detail-section">
+                        <div class="admin-card__header">
+                            <div>
+                                <h2 class="admin-card__title">Write a review</h2>
+                                <p class="admin-card__subtitle">Your review is reviewed by an administrator before it is published.</p>
+                            </div>
+                        </div>
+
+                        <div class="admin-card__body">
+                            @if (!Model.IsAuthenticated)
+                            {
+                                <div class="users-empty users-empty--inline">
+                                    <p>Sign in with an active account to share a review.</p>
+                                    <a asp-area="Identity"
+                                       asp-page="/Account/Login"
+                                       asp-route-returnUrl="@returnUrl"
+                                       class="admin-btn admin-btn--primary admin-btn--sm">Sign in</a>
+                                </div>
+                            }
+                            else
+                            {
+                                <form asp-area="Users"
+                                      asp-controller="Platforms"
+                                      asp-action="SubmitReview"
+                                      method="post"
+                                      class="admin-form"
+                                      data-submit-once>
+                                    <input type="hidden" name="PlatformId" value="@platform.Id" />
+
+                                    <div class="admin-grid admin-grid--2">
+                                        <div class="admin-field">
+                                            <label for="reviewReviewerName" class="admin-label">Your name</label>
+                                            <input id="reviewReviewerName" name="ReviewerName" class="admin-input" maxlength="100" required
+                                                   value="@Model.ReviewForm.ReviewerName" />
+                                        </div>
+
+                                        <div class="admin-field">
+                                            <label for="reviewRating" class="admin-label">Rating</label>
+                                            <select id="reviewRating" name="Rating" class="admin-select">
+                                                @for (var rating = 5; rating >= 1; rating--)
+                                                {
+                                                    if (Model.ReviewForm.Rating == rating)
+                                                    {
+                                                        <option value="@rating" selected>@rating star@(rating == 1 ? "" : "s")</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@rating">@rating star@(rating == 1 ? "" : "s")</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="admin-field">
+                                        <label for="reviewComment" class="admin-label">Your review</label>
+                                        <textarea id="reviewComment" name="Comment" class="admin-textarea" maxlength="1000" required
+                                                  placeholder="What was your experience working with this platform?">@Model.ReviewForm.Comment</textarea>
+                                    </div>
+
+                                    <div class="admin-actions">
+                                        <button type="submit" class="admin-btn admin-btn--primary">Submit review</button>
+                                    </div>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </section>
+
+                <section class="users-tab-panel hidden" data-users-tab-panel="opportunities" role="tabpanel">
+                    @if (Model.RelatedOpportunities.Count == 0)
+                    {
+                        <div class="users-empty">
+                            <p>No live opportunities for this platform right now.</p>
+                            <a asp-area="Users" asp-controller="Opportunities" asp-action="Index" class="admin-btn admin-btn--ghost admin-btn--sm">Browse all opportunities</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="users-card-grid">
+                            @foreach (var opportunity in Model.RelatedOpportunities)
+                            {
+                                <partial name="_OpportunityCard" model="opportunity" />
+                            }
+                        </div>
+                    }
+                </section>
+            </div>
+        </div>
+
+        <aside class="users-detail-aside">
+            <vc:advertisement-slot position="Sidebar"></vc:advertisement-slot>
+
+            <div class="admin-card">
+                <div class="admin-card__header">
+                    <div>
+                        <h2 class="admin-card__title">Quick facts</h2>
+                        <p class="admin-card__subtitle">At a glance.</p>
+                    </div>
+                </div>
+                <div class="admin-card__body">
+                    <dl class="users-fact-list">
+                        <div class="users-fact">
+                            <dt>Status</dt>
+                            <dd><span class="admin-badge @DisplayHelpers.PlatformStatusCss(platform.Status)">@platform.Status</span></dd>
+                        </div>
+                        <div class="users-fact">
+                            <dt>Added</dt>
+                            <dd>@platform.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</dd>
+                        </div>
+                        <div class="users-fact">
+                            <dt>Countries</dt>
+                            <dd>@platform.Countries.Count</dd>
+                        </div>
+                        <div class="users-fact">
+                            <dt>Payout methods</dt>
+                            <dd>@platform.PaymentMethods.Count</dd>
+                        </div>
+                        <div class="users-fact">
+                            <dt>Website</dt>
+                            <dd><a href="@platform.WebsiteUrl" target="_blank" rel="noopener noreferrer" class="admin-link">Open site</a></dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <div class="admin-card__header">
+                    <div>
+                        <h2 class="admin-card__title">Help other trainers</h2>
+                        <p class="admin-card__subtitle">Contribute to the community.</p>
+                    </div>
+                </div>
+                <div class="admin-card__body">
+                    <p class="users-muted users-aside-copy">
+                        Share an approved video guide or a review of your experience. Contributions are moderated
+                        before they are published.
+                    </p>
+                    <a asp-area="Users" asp-controller="Suggestions" asp-action="Create" class="admin-btn admin-btn--ghost admin-btn--sm users-aside-cta">Suggest a platform</a>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>

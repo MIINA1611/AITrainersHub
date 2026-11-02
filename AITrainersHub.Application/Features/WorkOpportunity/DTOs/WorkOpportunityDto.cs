@@ -7,6 +7,10 @@ namespace AITrainersHub.Application.Features.WorkOpportunity.DTOs
     {
         public Guid Id { get; set; }
         public Guid LeaderId { get; set; }
+        public string LeaderDisplayName { get; set; } = string.Empty;
+        public Guid PlatformId { get; set; }
+        public string PlatformName { get; set; } = string.Empty;
+        public string PlatformSlug { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
         public string DescriptionAr { get; set; } = string.Empty;
         public string DescriptionEn { get; set; } = string.Empty;

@@ -18,6 +18,12 @@ namespace AITrainersHub.Application.Features.WorkOpportunity.Validators
                     await context.Users.AnyAsync(u => u.Id == leaderId, cancellationToken))
                 .WithMessage("Leader does not exist.");
 
+            RuleFor(x => x.PlatformId)
+                .NotEmpty().WithMessage("Platform is required.")
+                .MustAsync(async (platformId, cancellationToken) =>
+                    await context.Platforms.AnyAsync(p => p.Id == platformId, cancellationToken))
+                .WithMessage("Platform does not exist.");
+
             RuleFor(x => x.Title)
                 .NotEmpty().WithMessage("Opportunity title is required.")
                 .MaximumLength(150).WithMessage("Opportunity title must not exceed 150 characters.");

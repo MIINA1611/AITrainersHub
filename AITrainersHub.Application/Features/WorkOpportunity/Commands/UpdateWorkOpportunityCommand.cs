@@ -11,6 +11,7 @@ namespace AITrainersHub.Application.Features.WorkOpportunity.Commands
     public class UpdateWorkOpportunityCommand : IRequest<WorkOpportunityDto>, ICacheInvalidatorCommand
     {
         public Guid Id { get; set; }
+        public Guid? PlatformId { get; set; }
         public string? Title { get; set; }
         public string? DescriptionAr { get; set; }
         public string? DescriptionEn { get; set; }
@@ -31,6 +32,7 @@ namespace AITrainersHub.Application.Features.WorkOpportunity.Commands
 
         public UpdateWorkOpportunityCommand(
             Guid id,
+            Guid? platformId,
             string? title,
             string? descriptionAr,
             string? descriptionEn,
@@ -39,6 +41,7 @@ namespace AITrainersHub.Application.Features.WorkOpportunity.Commands
             bool? isActive)
         {
             Id = id;
+            PlatformId = platformId;
             Title = title;
             DescriptionAr = descriptionAr;
             DescriptionEn = descriptionEn;

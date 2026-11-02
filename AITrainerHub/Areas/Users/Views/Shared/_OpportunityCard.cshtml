@@ -1,0 +1,32 @@
+@model WorkOpportunityDto
+@{
+    var description = DisplayHelpers.PreferredDescription(Model.DescriptionAr, Model.DescriptionEn);
+    var platformKey = string.IsNullOrWhiteSpace(Model.PlatformSlug) ? Model.PlatformId.ToString() : Model.PlatformSlug;
+    var platformUrl = Url.Action("Details", "Platforms", new { area = "Users", id = platformKey }) ?? "#";
+}
+<article class="users-opportunity-card">
+    <div class="users-opportunity-card__head">
+        <span class="admin-badge admin-badge--purple">@(string.IsNullOrWhiteSpace(Model.PlatformName) ? "Platform" : Model.PlatformName)</span>
+        <span class="users-opportunity-card__date">@Model.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</span>
+    </div>
+
+    <h3 class="users-opportunity-card__title">@Model.Title</h3>
+
+    <p class="users-opportunity-card__leader">
+        Posted by
+        <strong>@(string.IsNullOrWhiteSpace(Model.LeaderDisplayName) ? "AITrainersHub Leader" : Model.LeaderDisplayName)</strong>
+    </p>
+
+    <p class="users-opportunity-card__copy">
+        @(string.IsNullOrWhiteSpace(description)
+            ? "Open the platform details to learn more about this opportunity."
+            : DisplayHelpers.Excerpt(description, 190))
+    </p>
+
+    <div class="users-opportunity-card__footer">
+        <a href="@Model.WhatsAppLink" target="_blank" rel="noopener noreferrer" class="admin-btn admin-btn--success admin-btn--sm">
+            Apply on WhatsApp
+        </a>
+        <a href="@platformUrl" class="admin-btn admin-btn--ghost admin-btn--sm">Platform details</a>
+    </div>
+</article>

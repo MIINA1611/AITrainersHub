@@ -25,6 +25,10 @@ namespace AITrainersHub.Application.Features.WorkOpportunity.Handlers.QueriesHan
                 {
                     Id = o.Id,
                     LeaderId = o.LeaderId,
+                    LeaderDisplayName = o.Leader.DisplayName ?? o.Leader.UserName ?? string.Empty,
+                    PlatformId = o.PlatformId,
+                    PlatformName = o.Platform.Name,
+                    PlatformSlug = o.Platform.Slug,
                     Title = o.Title,
                     DescriptionAr = o.DescriptionAr,
                     DescriptionEn = o.DescriptionEn,

@@ -11,6 +11,7 @@ namespace AITrainersHub.Domain.Enums
 
         public const string LeaderRole = "Leader";
         public const string AdminRole = "Admin";
+        public const string UserRole = "User";
 
     }
 }

@@ -1,0 +1,17 @@
+@model LeaderOpportunityFormViewModel
+@{
+    ViewData["Title"] = "New Opportunity";
+}
+
+<div class="admin-page-header">
+    <div>
+        <h2 class="admin-page-title">New Opportunity</h2>
+        <p class="admin-page-subtitle">Share a real opportunity with the community. New opportunities are reviewed before they go live.</p>
+    </div>
+
+    <div class="admin-page-actions">
+        <a asp-area="Leader" asp-controller="Home" asp-action="Index" class="admin-btn admin-btn--ghost">Back to dashboard</a>
+    </div>
+</div>
+
+<partial name="_OpportunityForm" model="Model" />

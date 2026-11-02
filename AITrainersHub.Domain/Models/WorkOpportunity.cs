@@ -12,6 +12,9 @@ namespace AITrainersHub.Domain.Models
         public Guid LeaderId { get; set; }
         public ApplicationUser Leader { get; set; } = null!;
 
+        public Guid PlatformId { get; set; }
+        public Platform Platform { get; set; } = null!;
+
         public string Title { get; set; } = string.Empty;
         public string DescriptionAr { get; set; } = string.Empty;
         public string DescriptionEn { get; set; } = string.Empty;
@@ -28,18 +31,21 @@ namespace AITrainersHub.Domain.Models
         }
         public WorkOpportunity(
             Guid leaderId,
+            Guid platformId,
             string title,
             string descriptionAr,
             string descriptionEn,
             string whatsAppLink)
         {
             LeaderId = leaderId;
+            PlatformId = platformId;
             Title = title;
             DescriptionAr = descriptionAr;
             DescriptionEn = descriptionEn;
             WhatsAppLink = whatsAppLink;
         }
         public void Update(
+            Guid? platformId,
             string? title,
             string? descriptionAr,
             string? descriptionEn,
@@ -47,6 +53,7 @@ namespace AITrainersHub.Domain.Models
             bool? isApproved,
             bool? isActive)
         {
+            PlatformId = platformId ?? PlatformId;
             Title = title ?? Title;
             DescriptionAr = descriptionAr ?? DescriptionAr;
             DescriptionEn = descriptionEn ?? DescriptionEn;

@@ -20,6 +20,13 @@ namespace AITrainersHub.Application.Features.Advertisement.Commands
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
 
+        /// <summary>
+        /// When true, the supplied StartDate and EndDate replace the stored values,
+        /// including clearing them when both are null. Other callers (for example
+        /// the active toggle) leave this false so a partial update never wipes dates.
+        /// </summary>
+        public bool UpdateSchedule { get; set; }
+
         public HashSet<string> CacheKeySet { get; } = new()
         {
             nameof(ReadAdvertisementsQuery),

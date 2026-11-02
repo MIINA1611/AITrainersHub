@@ -18,12 +18,15 @@
 
         toastTimer = window.setTimeout(function () {
             toast.classList.add("hidden");
-        }, 2600);
+        }, 3000);
     }
 
     window.usersToast = showToast;
 
-    /* Mobile navigation drawer */
+    /* ----------------------------------------------------------------------
+       Mobile navigation drawer
+       ---------------------------------------------------------------------- */
+
     var drawer = document.getElementById("usersDrawer");
     var drawerToggle = document.getElementById("usersDrawerToggle");
     var menuIcon = document.getElementById("usersMenuIcon");
@@ -76,7 +79,10 @@
         }
     });
 
-    /* Placeholder actions for features that are not migrated yet */
+    /* ----------------------------------------------------------------------
+       Placeholder actions left in legacy screens
+       ---------------------------------------------------------------------- */
+
     document.addEventListener("click", function (event) {
         var trigger = event.target.closest("[data-placeholder]");
 
@@ -88,7 +94,10 @@
         showToast(trigger.getAttribute("data-placeholder") || "Coming soon.");
     });
 
-    /* Password visibility toggles */
+    /* ----------------------------------------------------------------------
+       Password visibility toggles
+       ---------------------------------------------------------------------- */
+
     document.querySelectorAll("[data-password-toggle]").forEach(function (button) {
         button.addEventListener("click", function () {
             var input = document.getElementById(button.getAttribute("data-password-toggle"));
@@ -114,24 +123,142 @@
         });
     });
 
-    /* Landing category tabs */
-    document.querySelectorAll("[data-users-tab]").forEach(function (tab) {
-        tab.addEventListener("click", function () {
-            var group = tab.closest("[data-users-tabs]");
+    /* ----------------------------------------------------------------------
+       Confirmation for destructive forms
+       ---------------------------------------------------------------------- */
 
-            if (group) {
-                group.querySelectorAll("[data-users-tab]").forEach(function (item) {
-                    item.setAttribute("aria-selected", "false");
-                    item.classList.remove("bg-white", "text-black", "shadow");
-                    item.classList.add("text-gray-400");
-                });
+    document.querySelectorAll("form[data-confirm]").forEach(function (form) {
+        form.addEventListener("submit", function (event) {
+            var message = form.getAttribute("data-confirm") || "Are you sure?";
+
+            if (!window.confirm(message)) {
+                event.preventDefault();
             }
-
-            tab.setAttribute("aria-selected", "true");
-            tab.classList.add("bg-white", "text-black", "shadow");
-            tab.classList.remove("text-gray-400");
-
-            showToast("Explore filters are coming soon.");
         });
     });
+
+    /* ----------------------------------------------------------------------
+       Auto-submit selects and toggles
+       ---------------------------------------------------------------------- */
+
+    document.querySelectorAll("[data-auto-submit]").forEach(function (element) {
+        element.addEventListener("change", function () {
+            var form = element.closest("form");
+
+            if (form) {
+                form.submit();
+            }
+        });
+    });
+
+    /* ----------------------------------------------------------------------
+       Debounced live search
+       ---------------------------------------------------------------------- */
+
+    var liveSearchTimer = null;
+
+    document.querySelectorAll("[data-live-search]").forEach(function (input) {
+        input.addEventListener("input", function () {
+            var form = input.closest("form");
+
+            if (!form) {
+                return;
+            }
+
+            if (liveSearchTimer) {
+                window.clearTimeout(liveSearchTimer);
+            }
+
+            liveSearchTimer = window.setTimeout(function () {
+                form.submit();
+            }, 450);
+        });
+    });
+
+    /* ----------------------------------------------------------------------
+       Tabs (Overview / Guides / Reviews / Opportunities)
+       ---------------------------------------------------------------------- */
+
+    function activateTab(group, name, updateHash) {
+        if (!group) {
+            return;
+        }
+
+        var buttons = Array.prototype.slice.call(group.querySelectorAll("[data-users-tab]"));
+        var panels = Array.prototype.slice.call(group.querySelectorAll("[data-users-tab-panel]"));
+
+        if (buttons.length === 0) {
+            return;
+        }
+
+        var exists = buttons.some(function (button) {
+            return button.getAttribute("data-users-tab") === name;
+        });
+
+        if (!exists) {
+            name = buttons[0].getAttribute("data-users-tab");
+        }
+
+        buttons.forEach(function (button) {
+            var active = button.getAttribute("data-users-tab") === name;
+            button.classList.toggle("is-active", active);
+            button.setAttribute("aria-selected", active ? "true" : "false");
+        });
+
+        panels.forEach(function (panel) {
+            panel.classList.toggle("hidden", panel.getAttribute("data-users-tab-panel") !== name);
+        });
+
+        if (updateHash) {
+            var nextUrl = name
+                ? "#" + name
+                : window.location.pathname + window.location.search;
+
+            if (window.history && window.history.replaceState) {
+                window.history.replaceState(null, "", nextUrl);
+            }
+        }
+    }
+
+    var tabGroups = document.querySelectorAll("[data-users-tab-group]");
+
+    tabGroups.forEach(function (group) {
+        var buttons = group.querySelectorAll("[data-users-tab]");
+
+        buttons.forEach(function (button) {
+            button.addEventListener("click", function () {
+                activateTab(group, button.getAttribute("data-users-tab"), true);
+            });
+        });
+
+        var initial = window.location.hash.replace("#", "");
+
+        if (initial) {
+            activateTab(group, initial, false);
+        }
+    });
+
+    window.addEventListener("hashchange", function () {
+        var name = window.location.hash.replace("#", "");
+
+        if (!name) {
+            return;
+        }
+
+        tabGroups.forEach(function (group) {
+            activateTab(group, name, false);
+        });
+    });
+
+    /* ----------------------------------------------------------------------
+       Server-side toast
+       ---------------------------------------------------------------------- */
+
+    if (toast) {
+        var serverMessage = toast.getAttribute("data-message");
+
+        if (serverMessage) {
+            showToast(serverMessage);
+        }
+    }
 })();

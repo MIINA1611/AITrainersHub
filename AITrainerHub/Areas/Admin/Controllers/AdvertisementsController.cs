@@ -137,7 +137,8 @@ namespace AITrainerHub.Area.Admin.Controllers
                         Position = request.Position.Trim(),
                         IsActive = request.IsActive,
                         StartDate = request.StartDate,
-                        EndDate = request.EndDate
+                        EndDate = request.EndDate,
+                        UpdateSchedule = true
                     },
                     cancellationToken);
 

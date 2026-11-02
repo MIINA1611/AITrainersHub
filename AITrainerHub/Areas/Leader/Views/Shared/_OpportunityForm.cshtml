@@ -1,0 +1,100 @@
+@model LeaderOpportunityFormViewModel
+@{
+    var cancelUrl = Url.Action("Index", "Home", new { area = "Leader" }) ?? "/Leader/Home";
+}
+
+<form asp-area="Leader"
+      asp-controller="Opportunities"
+      asp-action="@Model.FormAction"
+      asp-route-id="@(Model.IsEdit ? Model.Form.Id.ToString() : null)"
+      method="post"
+      class="admin-form"
+      data-submit-once>
+    <input type="hidden" asp-for="Form.Id" />
+
+    @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+    {
+        <div asp-validation-summary="ModelOnly" class="admin-alert admin-alert--error" role="alert"></div>
+    }
+
+    <div class="admin-card">
+        <div class="admin-card__header">
+            <div>
+                <h3 class="admin-card__title">@Model.FormTitle</h3>
+                <p class="admin-card__subtitle">@Model.FormSubtitle</p>
+            </div>
+            @if (Model.IsEdit)
+            {
+                <span class="admin-badge admin-badge--purple">Editing</span>
+            }
+        </div>
+
+        <div class="admin-card__body">
+            <div class="admin-grid admin-grid--2">
+                <div class="admin-field">
+                    <label asp-for="Form.Title" class="admin-label">Title</label>
+                    <input asp-for="Form.Title" class="admin-input" maxlength="150" placeholder="e.g. Arabic transcription reviewer" />
+                    <span asp-validation-for="Form.Title" class="admin-error"></span>
+                </div>
+
+                <div class="admin-field">
+                    <label asp-for="Form.PlatformId" class="admin-label">Platform</label>
+                    <select asp-for="Form.PlatformId" class="admin-select">
+                        <option value="">Select a platform</option>
+                        @foreach (var platform in Model.Platforms)
+                        {
+                            if (Model.Form.PlatformId == platform.Id)
+                            {
+                                <option value="@platform.Id" selected>@platform.Name (@platform.Status)</option>
+                            }
+                            else
+                            {
+                                <option value="@platform.Id">@platform.Name (@platform.Status)</option>
+                            }
+                        }
+                    </select>
+                    <span class="admin-help">The platform this opportunity belongs to.</span>
+                    <span asp-validation-for="Form.PlatformId" class="admin-error"></span>
+                </div>
+
+                <div class="admin-field">
+                    <label asp-for="Form.DescriptionAr" class="admin-label">Arabic description</label>
+                    <textarea asp-for="Form.DescriptionAr" class="admin-textarea" dir="rtl" maxlength="2000" placeholder="اكتب وصف الفرصة بالعربية"></textarea>
+                    <span asp-validation-for="Form.DescriptionAr" class="admin-error"></span>
+                </div>
+
+                <div class="admin-field">
+                    <label asp-for="Form.DescriptionEn" class="admin-label">English description</label>
+                    <textarea asp-for="Form.DescriptionEn" class="admin-textarea" dir="ltr" maxlength="2000" placeholder="Describe the opportunity in English"></textarea>
+                    <span asp-validation-for="Form.DescriptionEn" class="admin-error"></span>
+                </div>
+
+                <div class="admin-field">
+                    <label asp-for="Form.WhatsAppLink" class="admin-label">WhatsApp application link</label>
+                    <input asp-for="Form.WhatsAppLink" class="admin-input" dir="ltr" maxlength="300" placeholder="https://wa.me/..." />
+                    <span class="admin-help">Applicants use this link to contact you directly.</span>
+                    <span asp-validation-for="Form.WhatsAppLink" class="admin-error"></span>
+                </div>
+
+                <div class="admin-field">
+                    <label class="admin-label">Visibility</label>
+                    <label class="admin-switch">
+                        <input asp-for="Form.IsActive" />
+                        <span class="admin-switch__track"></span>
+                        <span class="admin-help">The public board only shows approved, active opportunities.</span>
+                    </label>
+                    <span asp-validation-for="Form.IsActive" class="admin-error"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-card__footer">
+            <div class="admin-actions">
+                <button type="submit" class="admin-btn admin-btn--primary">
+                    @(Model.IsEdit ? "Save changes" : "Submit for review")
+                </button>
+                <a href="@cancelUrl" class="admin-btn admin-btn--ghost">Cancel</a>
+            </div>
+        </div>
+    </div>
+</form>

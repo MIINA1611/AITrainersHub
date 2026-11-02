@@ -1,0 +1,19 @@
+@model AdvertisementSlotViewModel
+@if (Model.Advertisement is not null)
+{
+    var advertisement = Model.Advertisement;
+    <aside class="users-ad users-ad--@Model.Position.ToLowerInvariant()" aria-label="Sponsored">
+        <span class="users-ad__label">Sponsored</span>
+        <h3 class="users-ad__title">@advertisement.Title</h3>
+
+        @if (!string.IsNullOrWhiteSpace(advertisement.Subtitle))
+        {
+            <p class="users-ad__copy">@advertisement.Subtitle</p>
+        }
+
+        <a href="@advertisement.CtaUrl"
+           target="_blank"
+           rel="noopener noreferrer sponsored"
+           class="admin-btn admin-btn--primary admin-btn--sm">@advertisement.CtaText</a>
+    </aside>
+}

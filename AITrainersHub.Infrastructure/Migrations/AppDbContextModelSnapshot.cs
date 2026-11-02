@@ -562,6 +562,9 @@ namespace AITrainersHub.Infrastructure.Migrations
                     b.Property<Guid>("LeaderId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("PlatformId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -575,6 +578,8 @@ namespace AITrainersHub.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("LeaderId");
+
+                    b.HasIndex("PlatformId");
 
                     b.ToTable("WorkOpportunities", (string)null);
                 });
@@ -790,7 +795,15 @@ namespace AITrainersHub.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("AITrainersHub.Domain.Models.Platform", "Platform")
+                        .WithMany()
+                        .HasForeignKey("PlatformId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Leader");
+
+                    b.Navigation("Platform");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

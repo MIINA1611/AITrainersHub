@@ -11,6 +11,7 @@ namespace AITrainersHub.Application.Features.WorkOpportunity.Commands
     public class AddWorkOpportunityCommand : IRequest<WorkOpportunityDto>, ICacheInvalidatorCommand
     {
         public Guid LeaderId { get; set; }
+        public Guid PlatformId { get; set; }
         public string Title { get; set; } = string.Empty;
         public string DescriptionAr { get; set; } = string.Empty;
         public string DescriptionEn { get; set; } = string.Empty;
@@ -29,12 +30,14 @@ namespace AITrainersHub.Application.Features.WorkOpportunity.Commands
 
         public AddWorkOpportunityCommand(
             Guid leaderId,
+            Guid platformId,
             string title,
             string descriptionAr,
             string descriptionEn,
             string whatsAppLink)
         {
             LeaderId = leaderId;
+            PlatformId = platformId;
             Title = title;
             DescriptionAr = descriptionAr;
             DescriptionEn = descriptionEn;

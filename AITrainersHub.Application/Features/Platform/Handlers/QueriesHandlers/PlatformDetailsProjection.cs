@@ -71,6 +71,7 @@ namespace AITrainersHub.Application.Features.Platform.Handlers.QueriesHandlers
                     })
                     .ToList(),
                 VideoGuides = p.VideoGuides
+                    .Where(v => v.IsApproved)
                     .OrderByDescending(v => v.CreatedAt)
                     .Select(v => new VideoGuideDto
                     {

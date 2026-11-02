@@ -1,0 +1,50 @@
+@model PaginationViewModel
+@if (Model.TotalCount > 0)
+{
+    <nav class="users-pagination" aria-label="Pagination">
+        <span class="users-pagination__summary">
+            Showing @Model.FirstItem&ndash;@Model.LastItem of @Model.TotalCount
+        </span>
+
+        <div class="admin-actions">
+            @if (Model.Page > 1)
+            {
+                <a asp-area="@Model.Area"
+                   asp-controller="@Model.Controller"
+                   asp-action="@Model.Action"
+                   asp-route-page="@(Model.Page - 1)"
+                   asp-all-route-data="@Model.RouteValues"
+                   class="admin-btn admin-btn--ghost admin-btn--sm">Previous</a>
+            }
+            else
+            {
+                <span class="admin-btn admin-btn--ghost admin-btn--sm is-disabled" aria-disabled="true">Previous</span>
+            }
+
+            @for (var pageNumber = 1; pageNumber <= Model.TotalPages; pageNumber++)
+            {
+                <a asp-area="@Model.Area"
+                   asp-controller="@Model.Controller"
+                   asp-action="@Model.Action"
+                   asp-route-page="@pageNumber"
+                   asp-all-route-data="@Model.RouteValues"
+                   class="admin-btn admin-btn--sm @(pageNumber == Model.Page ? "admin-btn--primary" : "admin-btn--ghost")"
+                   aria-current="@(pageNumber == Model.Page ? "page" : null)">@pageNumber</a>
+            }
+
+            @if (Model.Page < Model.TotalPages)
+            {
+                <a asp-area="@Model.Area"
+                   asp-controller="@Model.Controller"
+                   asp-action="@Model.Action"
+                   asp-route-page="@(Model.Page + 1)"
+                   asp-all-route-data="@Model.RouteValues"
+                   class="admin-btn admin-btn--ghost admin-btn--sm">Next</a>
+            }
+            else
+            {
+                <span class="admin-btn admin-btn--ghost admin-btn--sm is-disabled" aria-disabled="true">Next</span>
+            }
+        </div>
+    </nav>
+}
