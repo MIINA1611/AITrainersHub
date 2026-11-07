@@ -25,6 +25,10 @@ namespace AITrainersHub.Application.Features.PlatformSuggestion.Validators
                 .NotEmpty().WithMessage("Suggestion description is required.")
                 .MaximumLength(1000).WithMessage("Suggestion description must not exceed 1000 characters.");
 
+            RuleFor(x => x.SubmitterName)
+                .NotEmpty().WithMessage("Your name is required.")
+                .MaximumLength(100).WithMessage("Your name must not exceed 100 characters.");
+
             RuleFor(x => x.EmailOfUser)
                 .MaximumLength(150).WithMessage("Email address must not exceed 150 characters.")
                 .EmailAddress().WithMessage("Email address is invalid.")

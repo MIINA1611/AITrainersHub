@@ -1,5 +1,6 @@
 @using Microsoft.AspNetCore.Identity
 @using AITrainersHub.Domain.Models
+@using AITrainerHub.Presentation
 @using MediatR
 @using AITrainersHub.Application.Features.PlatformSuggestion.Queries
 @using AITrainersHub.Application.Features.Review.Queries
@@ -9,13 +10,12 @@
 @inject IMediator Mediator
 @{
     var currentUser = await UserManager.GetUserAsync(User);
-    var displayName = currentUser?.DisplayName ?? User.Identity?.Name ?? "Guest";
-    var email = currentUser?.Email ?? string.Empty;
-    var role = User.IsInRole("Admin") ? "Admin" : User.IsInRole("Leader") ? "Leader" : "Guest";
+    var displayName = currentUser?.DisplayName
+        ?? currentUser?.UserName
+        ?? currentUser?.Email
+        ?? "Administrator";
 
     ViewData["AdminDisplayName"] = displayName;
-    ViewData["AdminEmail"] = email;
-    ViewData["AdminRole"] = role;
 
     var pendingSuggestions = await Mediator.Send(new ReadPlatformSuggestionsQuery(false));
     var pendingVideoGuides = await Mediator.Send(new ReadPendingVideoGuidesQuery());
@@ -33,7 +33,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - AITrainerHub Admin</title>
+    <title>@Branding.DocumentTitle(ViewData["Title"] as string ?? "Admin Overview")</title>
+    <meta name="theme-color" content="#0b0618" />
+    <link rel="icon" type="image/svg+xml" href="~/favicon.svg" asp-append-version="true" />
+    <link rel="shortcut icon" type="image/svg+xml" href="~/favicon.svg" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin-custom.css" asp-append-version="true" />
 </head>
@@ -74,13 +77,21 @@
 
                 <h1 class="font-semibold truncate">@(ViewData["Title"] ?? "Admin Dashboard")</h1>
 
-                <div class="ml-auto hidden sm:flex items-center gap-2 text-sm text-gray-400">
-                    <span>@displayName</span>
-                    @if (User.Identity?.IsAuthenticated == true)
-                    {
-                        <span class="w-1 h-1 rounded-full bg-white/20"></span>
-                        <span class="text-purple-400">@role</span>
-                    }
+                <div class="ml-auto flex items-center gap-3 text-sm">
+                    <span class="font-medium text-gray-300">@displayName</span>
+                    <form method="post"
+                          asp-area="Identity"
+                          asp-page="/Account/Logout"
+                          asp-route-returnUrl="@Url.Action("Index", "Dashboard", new { area = "Admin" })">
+                        <button type="submit" class="inline-flex items-center gap-1.5 h-8 px-3 rounded-md text-xs font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" x2="9" y1="12" y2="12"></line>
+                            </svg>
+                            Sign out
+                        </button>
+                    </form>
                 </div>
             </header>
 

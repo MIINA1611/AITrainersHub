@@ -20,8 +20,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AITrainerHub.Area.Admin.Controllers
 {
-    [Area("Admin")]
-    public class ModerationController : Controller
+    public class ModerationController : AdminBaseController
     {
         private static readonly HashSet<string> AllowedTabs = new(StringComparer.OrdinalIgnoreCase)
         {

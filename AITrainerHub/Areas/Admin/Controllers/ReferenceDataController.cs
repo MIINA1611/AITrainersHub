@@ -12,8 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AITrainerHub.Area.Admin.Controllers
 {
-    [Area("Admin")]
-    public class ReferenceDataController : Controller
+    public class ReferenceDataController : AdminBaseController
     {
         private readonly IMediator _mediator;
 
@@ -27,7 +26,7 @@ namespace AITrainerHub.Area.Admin.Controllers
         {
             var items = await _mediator.Send(new ReadPaymentMethodsQuery(), cancellationToken);
 
-            ViewData["Title"] = "Reference Data";
+            ViewData["Title"] = "Reference Data — Payment Methods";
             ViewData["ReferenceTab"] = "payments";
 
             return View(new PaymentMethodsViewModel { Items = items });
@@ -119,7 +118,7 @@ namespace AITrainerHub.Area.Admin.Controllers
         {
             var items = await _mediator.Send(new ReadCountriesQuery(), cancellationToken);
 
-            ViewData["Title"] = "Reference Data";
+            ViewData["Title"] = "Reference Data — Countries";
             ViewData["ReferenceTab"] = "countries";
 
             return View(new CountriesViewModel { Items = items });

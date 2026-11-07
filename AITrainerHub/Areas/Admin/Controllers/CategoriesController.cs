@@ -6,8 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AITrainerHub.Area.Admin.Controllers
 {
-    [Area("Admin")]
-    public class CategoriesController : Controller
+    public class CategoriesController : AdminBaseController
     {
         private readonly IMediator _mediator;
 

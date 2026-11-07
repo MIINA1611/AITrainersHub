@@ -13,6 +13,7 @@ namespace AITrainersHub.Application.Features.PlatformSuggestion.Commands
         public string PlatformName { get; set; } = string.Empty;
         public string Url { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        public string SubmitterName { get; set; } = string.Empty;
         public string? EmailOfUser { get; set; }
         public Guid? CategoryId { get; set; }
 
@@ -32,13 +33,13 @@ namespace AITrainersHub.Application.Features.PlatformSuggestion.Commands
             string platformName,
             string url,
             string description,
-            string? emailOfUser,
+            string submitterName,
             Guid? categoryId)
         {
             PlatformName = platformName;
             Url = url;
             Description = description;
-            EmailOfUser = emailOfUser;
+            SubmitterName = submitterName;
             CategoryId = categoryId;
         }
     }

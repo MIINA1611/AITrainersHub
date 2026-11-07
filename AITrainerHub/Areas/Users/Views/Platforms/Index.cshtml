@@ -1,39 +1,13 @@
 ﻿@model PublicPlatformsIndexViewModel
 @{
-    ViewData["Title"] = "Platforms";
+    ViewData["Title"] = "Explore AI Training Platforms";
 
-    var routeValues = new Dictionary<string, string>();
-    if (!string.IsNullOrWhiteSpace(Model.Search))
+    var directorySection = new PlatformDirectorySectionViewModel
     {
-        routeValues["search"] = Model.Search;
-    }
-    if (Model.Status.HasValue)
-    {
-        routeValues["status"] = Model.Status.Value.ToString();
-    }
-    if (Model.CategoryId.HasValue)
-    {
-        routeValues["category"] = Model.CategoryId.Value.ToString();
-    }
-    if (Model.CountryId.HasValue)
-    {
-        routeValues["country"] = Model.CountryId.Value.ToString();
-    }
-    if (Model.PaymentMethodId.HasValue)
-    {
-        routeValues["payment"] = Model.PaymentMethodId.Value.ToString();
-    }
-
-    var pagination = new PaginationViewModel
-    {
+        Directory = Model,
         Area = "Users",
         Controller = "Platforms",
-        Action = "Index",
-        Page = Model.Page,
-        TotalPages = Model.TotalPages,
-        TotalCount = Model.TotalCount,
-        PageSize = Model.PageSize,
-        RouteValues = routeValues
+        Action = "Index"
     };
 }
 
@@ -52,147 +26,5 @@
         </div>
     </div>
 
-    <div class="users-directory-layout">
-        <div class="users-directory-main">
-            <form asp-area="Users" asp-controller="Platforms" asp-action="Index" method="get" class="users-filter-card" role="search">
-                <div class="users-filter-grid">
-                    <div class="admin-field users-filter-search">
-                        <label for="platformSearch" class="admin-label">Search</label>
-                        <input id="platformSearch" name="search" type="search" value="@Model.Search" class="admin-input" placeholder="Platform name or slug" />
-                    </div>
-
-                    <div class="admin-field">
-                        <label for="platformStatus" class="admin-label">Status</label>
-                        <select id="platformStatus" name="status" class="admin-select" data-auto-submit>
-                            <option value="">All statuses</option>
-                            @foreach (var status in new[] { PlatformStatus.Open, PlatformStatus.Soon, PlatformStatus.Closed })
-                            {
-                                if (Model.Status == status)
-                                {
-                                    <option value="@status" selected>@status</option>
-                                }
-                                else
-                                {
-                                    <option value="@status">@status</option>
-                                }
-                            }
-                        </select>
-                    </div>
-
-                    <div class="admin-field">
-                        <label for="platformCategory" class="admin-label">Category</label>
-                        <select id="platformCategory" name="category" class="admin-select" data-auto-submit>
-                            <option value="">All categories</option>
-                            @foreach (var category in Model.Categories)
-                            {
-                                if (Model.CategoryId == category.Id)
-                                {
-                                    <option value="@category.Id" selected>@category.Name</option>
-                                }
-                                else
-                                {
-                                    <option value="@category.Id">@category.Name</option>
-                                }
-                            }
-                        </select>
-                    </div>
-
-                    <div class="admin-field">
-                        <label for="platformCountry" class="admin-label">Country</label>
-                        <select id="platformCountry" name="country" class="admin-select" data-auto-submit>
-                            <option value="">All countries</option>
-                            @foreach (var country in Model.Countries)
-                            {
-                                var countryName = string.IsNullOrWhiteSpace(country.NameEn) ? country.NameAr : country.NameEn;
-                                if (Model.CountryId == country.Id)
-                                {
-                                    <option value="@country.Id" selected>@countryName</option>
-                                }
-                                else
-                                {
-                                    <option value="@country.Id">@countryName</option>
-                                }
-                            }
-                        </select>
-                    </div>
-
-                    <div class="admin-field">
-                        <label for="platformPayment" class="admin-label">Payment method</label>
-                        <select id="platformPayment" name="payment" class="admin-select" data-auto-submit>
-                            <option value="">All payment methods</option>
-                            @foreach (var paymentMethod in Model.PaymentMethods)
-                            {
-                                if (Model.PaymentMethodId == paymentMethod.Id)
-                                {
-                                    <option value="@paymentMethod.Id" selected>@paymentMethod.Name</option>
-                                }
-                                else
-                                {
-                                    <option value="@paymentMethod.Id">@paymentMethod.Name</option>
-                                }
-                            }
-                        </select>
-                    </div>
-
-                    <div class="users-filter-actions">
-                        <button type="submit" class="admin-btn admin-btn--primary">Apply filters</button>
-                        @if (Model.HasFilters)
-                        {
-                            <a asp-area="Users" asp-controller="Platforms" asp-action="Index" class="admin-btn admin-btn--ghost">Clear</a>
-                        }
-                    </div>
-                </div>
-            </form>
-
-            <div class="users-results-head">
-                <span>@Model.TotalCount platform@(Model.TotalCount == 1 ? "" : "s") found</span>
-                @if (Model.HasFilters)
-                {
-                    <a asp-area="Users" asp-controller="Platforms" asp-action="Index" class="users-section__link">Clear filters</a>
-                }
-            </div>
-
-            @if (Model.Platforms.Count == 0)
-            {
-                <div class="users-empty">
-                    <p>No platforms match these filters.</p>
-                    <a asp-area="Users" asp-controller="Platforms" asp-action="Index" class="admin-btn admin-btn--ghost admin-btn--sm">Reset filters</a>
-                </div>
-            }
-            else
-            {
-                <div class="users-card-grid">
-                    @foreach (var platform in Model.Platforms)
-                    {
-                        <partial name="_PlatformCard" model="platform" />
-                    }
-                </div>
-            }
-
-            <partial name="_Pagination" model="pagination" />
-        </div>
-
-        <aside class="users-directory-aside">
-            <vc:advertisement-slot position="Sidebar"></vc:advertisement-slot>
-
-            <div class="admin-card">
-                <div class="admin-card__header">
-                    <div>
-                        <h2 class="admin-card__title">Directory tips</h2>
-                        <p class="admin-card__subtitle">Get more from every listing.</p>
-                    </div>
-                </div>
-                <div class="admin-card__body">
-                    <ul class="users-tip-list">
-                        <li>Read reviews before applying to a platform.</li>
-                        <li>Check the country support notes for your region.</li>
-                        <li>Confirm payout methods before you start working.</li>
-                        <li>Share your own review after you finish a task.</li>
-                    </ul>
-                    <a asp-area="Users" asp-controller="Opportunities" asp-action="Index" class="admin-btn admin-btn--ghost admin-btn--sm users-aside-cta">Browse opportunities</a>
-                </div>
-            </div>
-        </aside>
-    </div>
+    <partial name="_PlatformDirectory" model="directorySection" />
 </div>
-

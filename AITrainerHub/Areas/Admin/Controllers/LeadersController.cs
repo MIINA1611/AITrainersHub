@@ -8,8 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AITrainerHub.Area.Admin.Controllers
 {
-    [Area("Admin")]
-    public class LeadersController : Controller
+    public class LeadersController : AdminBaseController
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMediator _mediator;
@@ -23,7 +22,7 @@ namespace AITrainerHub.Area.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-            var leaders = await _userManager.GetUsersInRoleAsync(Helpers.LeaderRole);
+            var leaders = await _userManager.GetUsersInRoleAsync(AITrainersHub.Domain.Enums.Helpers.LeaderRole);
             var opportunities = await _mediator.Send(new ReadWorkOpportunitiesQuery(), cancellationToken);
 
             var opportunityCounts = opportunities
@@ -49,8 +48,74 @@ namespace AITrainerHub.Area.Admin.Controllers
                     .ToList()
             };
 
-            ViewData["Title"] = "Leaders";
+            ViewData["Title"] = "Manage Leaders";
             return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            ViewData["Title"] = "Create Leader";
+            return View(new CreateLeaderViewModel());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CreateLeaderViewModel model)
+        {
+            ViewData["Title"] = "Create Leader";
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var email = model.Email.Trim();
+
+            if (await _userManager.FindByEmailAsync(email) is not null)
+            {
+                ModelState.AddModelError(nameof(model.Email), "An account with this email address already exists.");
+                return View(model);
+            }
+
+            var leader = new ApplicationUser
+            {
+                DisplayName = model.DisplayName.Trim(),
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            var createResult = await _userManager.CreateAsync(leader, model.Password);
+
+            if (!createResult.Succeeded)
+            {
+                foreach (var error in createResult.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+
+                return View(model);
+            }
+
+            var roleResult = await _userManager.AddToRoleAsync(leader, AITrainersHub.Domain.Enums.Helpers.LeaderRole);
+
+            if (!roleResult.Succeeded)
+            {
+                await _userManager.DeleteAsync(leader);
+
+                foreach (var error in roleResult.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+
+                return View(model);
+            }
+
+            TempData["Success"] = $"Leader account for {leader.DisplayName} was created successfully.";
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]

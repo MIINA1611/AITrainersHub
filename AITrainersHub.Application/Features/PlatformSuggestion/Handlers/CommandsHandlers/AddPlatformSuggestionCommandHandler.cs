@@ -21,7 +21,7 @@ namespace AITrainersHub.Application.Features.PlatformSuggestion.Handlers.Command
                 request.PlatformName,
                 request.Url,
                 request.Description,
-                request.EmailOfUser,
+                request.SubmitterName,
                 request.CategoryId);
 
             await context.PlatformSuggestions.AddAsync(platformSuggestion, cancellationToken);
@@ -38,6 +38,7 @@ namespace AITrainersHub.Application.Features.PlatformSuggestion.Handlers.Command
             PlatformName = platformSuggestion.PlatformName,
             Url = platformSuggestion.Url,
             Description = platformSuggestion.Description,
+            SubmitterName = platformSuggestion.SubmitterName,
             EmailOfUser = platformSuggestion.EmailOfUser,
             CategoryId = platformSuggestion.CategoryId,
             IsReviewed = platformSuggestion.IsReviewed,

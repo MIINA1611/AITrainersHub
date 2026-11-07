@@ -14,6 +14,7 @@ namespace AITrainersHub.Infrastructure.Persistence.Configurations
             builder.Property(s => s.PlatformName).IsRequired().HasMaxLength(150);
             builder.Property(s => s.Url).IsRequired().HasMaxLength(300);
             builder.Property(s => s.Description).IsRequired().HasMaxLength(1000);
+            builder.Property(s => s.SubmitterName).IsRequired().HasMaxLength(100);
             builder.Property(s => s.EmailOfUser).HasMaxLength(150);
 
             builder.Property(s => s.IsReviewed)

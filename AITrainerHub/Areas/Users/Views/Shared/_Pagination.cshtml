@@ -13,6 +13,7 @@
                    asp-controller="@Model.Controller"
                    asp-action="@Model.Action"
                    asp-route-page="@(Model.Page - 1)"
+                   asp-fragment="@Model.Fragment"
                    asp-all-route-data="@Model.RouteValues"
                    class="admin-btn admin-btn--ghost admin-btn--sm">Previous</a>
             }
@@ -27,6 +28,7 @@
                    asp-controller="@Model.Controller"
                    asp-action="@Model.Action"
                    asp-route-page="@pageNumber"
+                   asp-fragment="@Model.Fragment"
                    asp-all-route-data="@Model.RouteValues"
                    class="admin-btn admin-btn--sm @(pageNumber == Model.Page ? "admin-btn--primary" : "admin-btn--ghost")"
                    aria-current="@(pageNumber == Model.Page ? "page" : null)">@pageNumber</a>
@@ -38,6 +40,7 @@
                    asp-controller="@Model.Controller"
                    asp-action="@Model.Action"
                    asp-route-page="@(Model.Page + 1)"
+                   asp-fragment="@Model.Fragment"
                    asp-all-route-data="@Model.RouteValues"
                    class="admin-btn admin-btn--ghost admin-btn--sm">Next</a>
             }

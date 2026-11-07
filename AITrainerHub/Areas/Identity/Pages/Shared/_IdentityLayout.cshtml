@@ -1,9 +1,13 @@
+@using AITrainerHub.Presentation
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - AITrainersHub</title>
+    <title>@Branding.DocumentTitle(ViewData["Title"] as string ?? "Sign In to Your Account")</title>
+    <meta name="theme-color" content="#0b0618" />
+    <link rel="icon" type="image/svg+xml" href="~/favicon.svg" asp-append-version="true" />
+    <link rel="shortcut icon" type="image/svg+xml" href="~/favicon.svg" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/users.css" asp-append-version="true" />
 </head>
@@ -12,8 +16,8 @@
         <div class="flex items-center justify-center p-6 sm:p-8 lg:px-10 bg-black">
             <div class="w-full max-w-sm">
                 <a asp-area="Users" asp-controller="Home" asp-action="Index" class="flex items-center gap-2.5 mb-8">
-                    <div class="w-8 h-8 rounded-lg bg-white text-black grid place-items-center font-black text-sm">AI</div>
-                    <span class="font-bold tracking-tight text-white">AITrainersHub</span>
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 via-purple-900 to-black ring-1 ring-purple-400/40 text-white grid place-items-center font-black text-sm">AI</div>
+                    <span class="font-bold tracking-tight text-white">AI Trainers Hub</span>
                 </a>
 
                 @RenderBody()

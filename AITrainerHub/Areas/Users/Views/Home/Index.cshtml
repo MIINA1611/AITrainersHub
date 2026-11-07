@@ -1,86 +1,164 @@
 @model PublicHomeViewModel
 @{
-    ViewData["Title"] = "Discover AI Training Platforms";
+    ViewData["Title"] = "AI Trainers Hub — Verified Directory & Opportunities for AI Trainers";
+
+    var platformsIndexUrl = Url.Action("Index", "Platforms", new { area = "Users" }) ?? "#";
+
+    string PillUrl(string label)
+    {
+        var match = Model.Categories.FirstOrDefault(category =>
+            string.Equals(category.Name, label, StringComparison.OrdinalIgnoreCase) ||
+            category.Name.StartsWith(label, StringComparison.OrdinalIgnoreCase) ||
+            label.StartsWith(category.Name, StringComparison.OrdinalIgnoreCase) ||
+            category.Name.Contains(label, StringComparison.OrdinalIgnoreCase) ||
+            label.Contains(category.Name, StringComparison.OrdinalIgnoreCase));
+
+        if (match is null)
+        {
+            return platformsIndexUrl;
+        }
+
+        return Url.Action("Index", "Platforms", new { area = "Users", category = match.Id })
+            ?? platformsIndexUrl;
+    }
 }
 
-<div class="users-page">
-    <section class="users-hero">
-        <div class="users-hero__grid">
-            <div class="users-hero__content">
-                <p class="users-hero__eyebrow">Verified AI training work</p>
-                <h1 class="users-hero__title">Find trusted AI training platforms in one place</h1>
-                <p class="users-hero__lead">
-                    Compare payout methods, supported countries and real community reviews before you apply.
-                    Every listing is reviewed by our team.
-                </p>
-                <p class="users-hero__arabic" dir="rtl" lang="ar">
-                    اكتشف منصات تدريب الذكاء الاصطناعي الموثوقة، وقارن طرق الدفع والدول المدعومة قبل التقديم.
-                </p>
+<div class="users-page users-landing">
+    <section class="users-landing-hero" aria-labelledby="landingTitle">
+        <div class="users-landing-hero__glow" aria-hidden="true"></div>
 
-                <form asp-area="Users" asp-controller="Platforms" asp-action="Index" method="get" class="users-hero__search" role="search">
-                    <label for="homeSearch" class="sr-only">Search platforms</label>
-                    <input id="homeSearch" name="search" type="search" class="admin-input" placeholder="Search by platform name or slug" />
-                    <button type="submit" class="admin-btn admin-btn--primary">Search</button>
-                </form>
+        <span class="users-landing-pill">
+            Trusted by AI Trainers <span class="users-landing-pill__dot" aria-hidden="true">•</span> Community-reviewed
+        </span>
 
-                <div class="users-hero__actions">
-                    <a asp-area="Users" asp-controller="Platforms" asp-action="Index" class="admin-btn admin-btn--primary">Browse platforms</a>
-                    <a asp-area="Users" asp-controller="Opportunities" asp-action="Index" class="admin-btn admin-btn--ghost">See opportunities</a>
-                </div>
+        <h1 id="landingTitle" class="users-landing-hero__title">
+            <span class="users-landing-hero__line">The Best Platforms</span>
+            <span class="users-landing-hero__line users-landing-hero__line--muted">for AI Trainers</span>
+        </h1>
 
-                <div class="users-stat-row">
-                    <div class="users-stat">
-                        <span class="users-stat__value">@Model.TotalPlatforms</span>
-                        <span class="users-stat__label">Platforms</span>
-                    </div>
-                    <div class="users-stat">
-                        <span class="users-stat__value">@Model.TotalOpportunities</span>
-                        <span class="users-stat__label">Live opportunities</span>
-                    </div>
-                    <div class="users-stat">
-                        <span class="users-stat__value">@Model.Categories.Count</span>
-                        <span class="users-stat__label">Categories</span>
-                    </div>
-                </div>
-            </div>
+        <p class="users-landing-hero__lead">
+            Your complete directory for AI training jobs. Compare Outlier, Remotasks and 120+ platforms — payouts, reviews and live status in one place
+        </p>
 
+        <div class="users-landing-hero__actions">
+            <a asp-area="Users" asp-controller="Platforms" asp-action="Index" class="users-landing-btn users-landing-btn--primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M5 12h14"></path>
+                    <path d="m12 5 7 7-7 7"></path>
+                </svg>
+                Explore Platforms
+            </a>
+            <a asp-area="Users" asp-controller="Suggestions" asp-action="Create" class="users-landing-btn users-landing-btn--ghost">
+                Suggest a Platform
+            </a>
+        </div>
+
+        <div class="users-landing-pills" aria-label="Popular skill areas">
+            @foreach (var label in new[] { "Insights", "Coding", "Writing", "Audio" })
+            {
+                <a href="@PillUrl(label)" class="users-landing-pill users-landing-pill--link">@label</a>
+            }
+        </div>
+
+        <div class="users-landing-hero__ad">
             <vc:advertisement-slot position="Hero"></vc:advertisement-slot>
         </div>
     </section>
 
-    @if (Model.Categories.Count > 0)
-    {
-        <section class="users-section">
-            <div class="users-section__header">
-                <div>
-                    <h2 class="users-section__title">Browse by category</h2>
-                    <p class="users-section__lead">Pick a skill area and jump straight to matching platforms.</p>
-                </div>
-            </div>
+    <section class="users-landing-section users-landing-features" aria-labelledby="featuresTitle">
+        <div class="users-landing-section__head">
+            <h2 id="featuresTitle" class="users-landing-section__title">Everything you need to get hired</h2>
+            <p class="users-landing-section__lead">
+                We verify, categorize and review so you can focus on training AI — not searching for jobs
+            </p>
+        </div>
 
-            <div class="users-chip-list users-chip-list--large">
-                @foreach (var category in Model.Categories)
-                {
-                    var count = Model.CategoryCounts.TryGetValue(category.Id, out var categoryCount) ? categoryCount : 0;
-                    <a asp-area="Users"
-                       asp-controller="Platforms"
-                       asp-action="Index"
-                       asp-route-category="@category.Id"
-                       class="users-category-chip">
-                        <span>@category.Name</span>
-                        <span class="users-category-chip__count">@count</span>
-                    </a>
-                }
-            </div>
-        </section>
-    }
+        <div class="users-feature-grid">
+            <article class="users-feature-card">
+                <span class="users-feature-card__icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        <path d="m9 12 2 2 4-4"></path>
+                    </svg>
+                </span>
+                <h3 class="users-feature-card__title">Verified Platforms</h3>
+                <p class="users-feature-card__copy">
+                    Every listing is manually vetted. No scams — only trusted partners like Outlier, Remotasks &amp; Scale AI.
+                </p>
+            </article>
 
-    <section class="users-section">
-        <div class="users-section__header">
-            <div>
-                <h2 class="users-section__title">Featured platforms</h2>
-                <p class="users-section__lead">Top-rated partners with clear payouts and active task queues.</p>
-            </div>
+            <article class="users-feature-card">
+                <span class="users-feature-card__icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+                        <circle cx="12" cy="12" r="2.5"></circle>
+                        <path d="M6 12h.01M18 12h.01"></path>
+                    </svg>
+                </span>
+                <h3 class="users-feature-card__title">Guaranteed Payouts</h3>
+                <p class="users-feature-card__copy">
+                    Clear payment info for each platform: PayPal, Payoneer, Crypto. Know how and when you get paid.
+                </p>
+            </article>
+
+            <article class="users-feature-card">
+                <span class="users-feature-card__icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-2.9-5.6 2.9 1.1-6.2L3 9.6l6.2-.9z"></path>
+                    </svg>
+                </span>
+                <h3 class="users-feature-card__title">Community Reviews</h3>
+                <p class="users-feature-card__copy">
+                    Real 1–5 star ratings from AI trainers. Read reviews before you apply, share your own experience.
+                </p>
+            </article>
+
+            <article class="users-feature-card">
+                <span class="users-feature-card__icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 10 12 5 2 10l10 5z"></path>
+                        <path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"></path>
+                        <path d="M22 10v6"></path>
+                    </svg>
+                </span>
+                <h3 class="users-feature-card__title">Smart Skill Matching</h3>
+                <p class="users-feature-card__copy">
+                    Filter by Coding, Writing or Audio. Find tasks that match your exact expertise and language.
+                </p>
+            </article>
+
+            <article class="users-feature-card">
+                <span class="users-feature-card__icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="9"></circle>
+                        <path d="M3 12h18"></path>
+                        <path d="M12 3a14 14 0 0 1 0 18"></path>
+                        <path d="M12 3a14 14 0 0 0 0 18"></path>
+                    </svg>
+                </span>
+                <h3 class="users-feature-card__title">Global Opportunities</h3>
+                <p class="users-feature-card__copy">
+                    Remote tasks open worldwide. Filter by region and work from anywhere, anytime.
+                </p>
+            </article>
+
+            <article class="users-feature-card">
+                <span class="users-feature-card__icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M13 2 4.5 14H11l-1 8 8.5-12H12z"></path>
+                    </svg>
+                </span>
+                <h3 class="users-feature-card__title">One-Click Apply</h3>
+                <p class="users-feature-card__copy">
+                    Go straight to the official application with our curated “Apply Now” links. No middleman, no delay.
+                </p>
+            </article>
+        </div>
+    </section>
+
+    <section class="users-landing-section users-landing-featured" aria-labelledby="featuredTitle">
+        <div class="users-landing-section__head users-landing-section__head--row">
+            <h2 id="featuredTitle" class="users-landing-section__title">Featured platforms</h2>
             <a asp-area="Users" asp-controller="Platforms" asp-action="Index" class="users-section__link">View all platforms</a>
         </div>
 
@@ -93,57 +171,12 @@
         }
         else
         {
-            <div class="users-card-grid">
-                @for (var index = 0; index < Model.FeaturedPlatforms.Count; index++)
+            <div class="users-card-grid users-card-grid--featured">
+                @foreach (var platform in Model.FeaturedPlatforms)
                 {
-                    if (index == 3)
-                    {
-                        <vc:advertisement-slot position="BetweenCards"></vc:advertisement-slot>
-                    }
-
-                    <partial name="_PlatformCard" model="Model.FeaturedPlatforms[index]" />
+                    <partial name="_PlatformCard" model="platform" />
                 }
             </div>
         }
-    </section>
-
-    <section class="users-section">
-        <div class="users-section__header">
-            <div>
-                <h2 class="users-section__title">Latest opportunities</h2>
-                <p class="users-section__lead">Fresh work shared by verified leaders and approved by our team.</p>
-            </div>
-            <a asp-area="Users" asp-controller="Opportunities" asp-action="Index" class="users-section__link">View the board</a>
-        </div>
-
-        @if (Model.LatestOpportunities.Count == 0)
-        {
-            <div class="users-empty">
-                <p>No live opportunities right now. New opportunities appear here after administrator approval.</p>
-            </div>
-        }
-        else
-        {
-            <div class="users-card-grid">
-                @foreach (var opportunity in Model.LatestOpportunities)
-                {
-                    <partial name="_OpportunityCard" model="opportunity" />
-                }
-            </div>
-        }
-    </section>
-
-    <section class="users-cta">
-        <div class="users-cta__content">
-            <p class="users-hero__eyebrow">Help the community grow</p>
-            <h2 class="users-section__title">Know a platform that should be listed?</h2>
-            <p class="users-section__lead">
-                Suggest it to our team. Every submission is reviewed before it is published, and approved
-                contributions make the directory better for everyone.
-            </p>
-            <a asp-area="Users" asp-controller="Suggestions" asp-action="Create" class="admin-btn admin-btn--primary">Suggest a platform</a>
-        </div>
-
-        <vc:advertisement-slot position="Sidebar"></vc:advertisement-slot>
     </section>
 </div>

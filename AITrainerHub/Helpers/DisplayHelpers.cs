@@ -66,12 +66,12 @@ namespace AITrainerHub.Presentation
 
         public static string PreferredDescription(string? arabic, string? english)
         {
-            if (!string.IsNullOrWhiteSpace(arabic))
+            if (!string.IsNullOrWhiteSpace(english))
             {
-                return arabic.Trim();
+                return english.Trim();
             }
 
-            return string.IsNullOrWhiteSpace(english) ? string.Empty : english.Trim();
+            return string.IsNullOrWhiteSpace(arabic) ? string.Empty : arabic.Trim();
         }
 
         public static string Excerpt(string? value, int maxLength = 150)

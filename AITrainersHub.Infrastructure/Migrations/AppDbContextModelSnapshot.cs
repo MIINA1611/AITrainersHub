@@ -429,6 +429,11 @@ namespace AITrainersHub.Infrastructure.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
+                    b.Property<string>("SubmitterName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasMaxLength(300)

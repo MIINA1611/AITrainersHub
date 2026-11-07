@@ -14,6 +14,7 @@ namespace AITrainersHub.Application.Features.PlatformSuggestion.Commands
         public string? PlatformName { get; set; }
         public string? Url { get; set; }
         public string? Description { get; set; }
+        public string? SubmitterName { get; set; }
         public string? EmailOfUser { get; set; }
         public Guid? CategoryId { get; set; }
         public bool? IsReviewed { get; set; }
@@ -35,6 +36,7 @@ namespace AITrainersHub.Application.Features.PlatformSuggestion.Commands
             string? platformName,
             string? url,
             string? description,
+            string? submitterName,
             string? emailOfUser,
             Guid? categoryId,
             bool? isReviewed)
@@ -43,6 +45,7 @@ namespace AITrainersHub.Application.Features.PlatformSuggestion.Commands
             PlatformName = platformName;
             Url = url;
             Description = description;
+            SubmitterName = submitterName;
             EmailOfUser = emailOfUser;
             CategoryId = categoryId;
             IsReviewed = isReviewed;

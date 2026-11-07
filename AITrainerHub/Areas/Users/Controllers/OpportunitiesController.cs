@@ -78,7 +78,7 @@ namespace AITrainerHub.Areas.Users.Controllers
                 page = totalPages;
             }
 
-            ViewData["Title"] = "Opportunities";
+            ViewData["Title"] = "Work Opportunities";
 
             return View(new OpportunitiesIndexViewModel
             {

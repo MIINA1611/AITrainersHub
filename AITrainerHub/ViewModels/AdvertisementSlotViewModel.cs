@@ -19,6 +19,7 @@ namespace AITrainerHub.ViewModels
         public string Area { get; set; } = "Users";
         public string Controller { get; set; } = string.Empty;
         public string Action { get; set; } = "Index";
+        public string? Fragment { get; set; }
         public int Page { get; set; } = 1;
         public int TotalPages { get; set; } = 1;
         public int TotalCount { get; set; }

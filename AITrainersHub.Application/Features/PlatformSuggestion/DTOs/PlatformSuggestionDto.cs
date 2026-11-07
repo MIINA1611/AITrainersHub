@@ -9,6 +9,7 @@ namespace AITrainersHub.Application.Features.PlatformSuggestion.DTOs
         public string PlatformName { get; set; } = string.Empty;
         public string Url { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        public string SubmitterName { get; set; } = string.Empty;
         public string? EmailOfUser { get; set; }
         public Guid? CategoryId { get; set; }
         public bool IsReviewed { get; set; }

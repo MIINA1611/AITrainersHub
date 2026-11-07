@@ -32,6 +32,7 @@ namespace AITrainersHub.Application.Features.PlatformSuggestion.Handlers.Command
                 request.PlatformName,
                 request.Url,
                 request.Description,
+                request.SubmitterName,
                 request.EmailOfUser,
                 request.CategoryId,
                 request.IsReviewed);
@@ -50,6 +51,7 @@ namespace AITrainersHub.Application.Features.PlatformSuggestion.Handlers.Command
             PlatformName = platformSuggestion.PlatformName,
             Url = platformSuggestion.Url,
             Description = platformSuggestion.Description,
+            SubmitterName = platformSuggestion.SubmitterName,
             EmailOfUser = platformSuggestion.EmailOfUser,
             CategoryId = platformSuggestion.CategoryId,
             IsReviewed = platformSuggestion.IsReviewed,

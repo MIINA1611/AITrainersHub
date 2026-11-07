@@ -1,0 +1,113 @@
+@model AdminsIndexViewModel
+@{
+    ViewData["Title"] = "Manage Admins";
+}
+
+<div class="admin-page-header">
+    <div>
+        <h2 class="admin-page-title">Admins</h2>
+        <p class="admin-page-subtitle">Review administrator accounts and activate or deactivate access to the Admin Area.</p>
+    </div>
+
+    <div class="admin-page-actions">
+        <a asp-area="Admin" asp-controller="Admins" asp-action="Create" class="admin-btn admin-btn--primary">Create admin</a>
+    </div>
+</div>
+
+<div class="admin-card">
+    <div class="admin-card__header">
+        <div>
+            <h3 class="admin-card__title">Administrator Accounts</h3>
+            <p class="admin-card__subtitle">Admins have full access to platforms, moderation and account management. You cannot deactivate or delete your own account.</p>
+        </div>
+        <span class="admin-badge admin-badge--purple">@Model.Admins.Count total</span>
+    </div>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table admin-table--wide">
+            <colgroup>
+                <col style="width: 23%" />
+                <col style="width: 28%" />
+                <col style="width: 14%" />
+                <col style="width: 12%" />
+                <col style="width: 23%" />
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Registered</th>
+                    <th>Status</th>
+                    <th class="col-actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Admins.Count == 0)
+                {
+                    <tr>
+                        <td colspan="5" class="admin-empty">No admin accounts found.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var admin in Model.Admins)
+                    {
+                        <tr>
+                            <td>
+                                <div class="admin-actions">
+                                    <span class="admin-avatar">@(string.IsNullOrWhiteSpace(admin.DisplayName) ? "?" : admin.DisplayName.Substring(0, 1).ToUpperInvariant())</span>
+                                    <span class="admin-cell-title">@admin.DisplayName</span>
+                                    @if (admin.IsCurrentUser)
+                                    {
+                                        <span class="admin-badge admin-badge--purple">You</span>
+                                    }
+                                </div>
+                            </td>
+                            <td><span class="admin-ltr">@admin.Email</span></td>
+                            <td>@admin.RegisteredAt.ToLocalTime().ToString("yyyy-MM-dd")</td>
+                            <td>
+                                @if (admin.IsActive)
+                                {
+                                    <span class="admin-badge admin-badge--green">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="admin-badge admin-badge--red">Inactive</span>
+                                }
+                            </td>
+                            <td class="col-actions">
+                                @if (admin.IsCurrentUser)
+                                {
+                                    <div class="cell-actions">
+                                        <span class="admin-badge admin-badge--gray">Current account</span>
+                                        <span class="admin-help">Self-management is disabled.</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="cell-actions">
+                                        <form asp-area="Admin" asp-controller="Admins" asp-action="ToggleStatus" method="post" asp-antiforgery="true" data-confirm="@(admin.IsActive ? "Deactivate this admin? They will be signed out immediately." : "Activate this admin account?")">
+                                            <input type="hidden" name="id" value="@admin.Id" />
+                                            @if (admin.IsActive)
+                                            {
+                                                <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Deactivate</button>
+                                            }
+                                            else
+                                            {
+                                                <button type="submit" class="admin-btn admin-btn--success admin-btn--sm">Activate</button>
+                                            }
+                                        </form>
+                                        <form asp-area="Admin" asp-controller="Admins" asp-action="Delete" method="post" asp-antiforgery="true" data-confirm="Delete this admin account permanently?">
+                                            <input type="hidden" name="id" value="@admin.Id" />
+                                            <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Delete</button>
+                                        </form>
+                                    </div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

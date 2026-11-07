@@ -10,8 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AITrainerHub.Area.Admin.Controllers
 {
-    [Area("Admin")]
-    public class AdvertisementsController : Controller
+    public class AdvertisementsController : AdminBaseController
     {
         private readonly IMediator _mediator;
 
@@ -25,7 +24,7 @@ namespace AITrainerHub.Area.Admin.Controllers
         {
             var advertisements = await _mediator.Send(new ReadAdvertisementsQuery(), cancellationToken);
 
-            ViewData["Title"] = "Advertisements";
+            ViewData["Title"] = "Manage Advertisements";
             return View(advertisements);
         }
 

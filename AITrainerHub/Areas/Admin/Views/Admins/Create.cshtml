@@ -1,0 +1,61 @@
+@model CreateAdminViewModel
+@{
+    ViewData["Title"] = "Create Admin";
+}
+
+<div class="admin-page-header">
+    <div>
+        <h2 class="admin-page-title">Create admin</h2>
+        <p class="admin-page-subtitle">Create a new administrator account with full access to the Admin Area.</p>
+    </div>
+
+    <div class="admin-page-actions">
+        <a asp-area="Admin" asp-controller="Admins" asp-action="Index" class="admin-btn admin-btn--ghost">Back to admins</a>
+    </div>
+</div>
+
+<div class="admin-card">
+    <div class="admin-card__header">
+        <div>
+            <h3 class="admin-card__title">Admin account</h3>
+            <p class="admin-card__subtitle">The new admin can change their password after signing in.</p>
+        </div>
+        <span class="admin-badge admin-badge--purple">Admin role</span>
+    </div>
+
+    <div class="admin-card__body">
+        <form asp-area="Admin" asp-controller="Admins" asp-action="Create" method="post" class="admin-form" data-submit-once>
+            <div asp-validation-summary="ModelOnly" class="admin-alert admin-alert--error" role="alert"></div>
+
+            <div class="admin-grid admin-grid--2">
+                <div class="admin-field">
+                    <label asp-for="Name" class="admin-label"></label>
+                    <input asp-for="Name" class="admin-input" maxlength="100" placeholder="e.g. Alex Morgan" autocomplete="name" />
+                    <span asp-validation-for="Name" class="admin-error"></span>
+                </div>
+
+                <div class="admin-field">
+                    <label asp-for="Email" class="admin-label"></label>
+                    <input asp-for="Email" type="email" dir="ltr" class="admin-input" maxlength="200" placeholder="admin@example.com" autocomplete="email" />
+                    <span asp-validation-for="Email" class="admin-error"></span>
+                </div>
+
+                <div class="admin-field">
+                    <label asp-for="Password" class="admin-label"></label>
+                    <input asp-for="Password" type="password" dir="ltr" class="admin-input" maxlength="100" autocomplete="new-password" />
+                    <span class="admin-help">At least 8 characters with uppercase, lowercase, a number and a symbol.</span>
+                    <span asp-validation-for="Password" class="admin-error"></span>
+                </div>
+            </div>
+
+            <div class="admin-alert admin-alert--info">
+                This account will be able to manage platforms, moderate submissions and create other admin accounts.
+            </div>
+
+            <div class="admin-actions">
+                <button type="submit" class="admin-btn admin-btn--primary">Create admin account</button>
+                <a asp-area="Admin" asp-controller="Admins" asp-action="Index" class="admin-btn admin-btn--ghost">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

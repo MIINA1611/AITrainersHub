@@ -5,15 +5,18 @@ using AITrainersHub.Application.Features.Platform.Queries;
 using AITrainersHub.Application.Features.WorkOpportunity.Commands;
 using AITrainersHub.Application.Features.WorkOpportunity.DTOs;
 using AITrainersHub.Application.Features.WorkOpportunity.Queries;
+using AITrainersHub.Domain.Enums;
 using AITrainersHub.Domain.Models;
 using FluentValidation;
 using huzcodes.Extensions.Exceptions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AITrainerHub.Areas.Leader.Controllers
 {
+    [Authorize(Roles = Helpers.LeaderRole)]
     public class OpportunitiesController : LeaderControllerBase
     {
         private readonly IMediator _mediator;
@@ -39,7 +42,7 @@ namespace AITrainerHub.Areas.Leader.Controllers
         [HttpGet]
         public async Task<IActionResult> Create(CancellationToken cancellationToken)
         {
-            ViewData["Title"] = "New Opportunity";
+            ViewData["Title"] = "Create Work Opportunity";
             return View(await BuildFormAsync(null, false, cancellationToken));
         }
 
@@ -49,7 +52,7 @@ namespace AITrainerHub.Areas.Leader.Controllers
             [Bind(Prefix = "Form")] OpportunityFormRequest form,
             CancellationToken cancellationToken)
         {
-            ViewData["Title"] = "New Opportunity";
+            ViewData["Title"] = "Create Work Opportunity";
 
             var validation = await _validator.ValidateAsync(form, cancellationToken);
             if (!validation.IsValid)
@@ -96,7 +99,7 @@ namespace AITrainerHub.Areas.Leader.Controllers
                 return RedirectToAction("Index", "Home", new { area = "Leader" });
             }
 
-            ViewData["Title"] = "Edit Opportunity";
+            ViewData["Title"] = "Edit Work Opportunity";
 
             var form = new OpportunityFormRequest
             {
@@ -130,7 +133,7 @@ namespace AITrainerHub.Areas.Leader.Controllers
                 return Forbid();
             }
 
-            ViewData["Title"] = "Edit Opportunity";
+            ViewData["Title"] = "Edit Work Opportunity";
 
             var validation = await _validator.ValidateAsync(form, cancellationToken);
             if (!validation.IsValid)

@@ -12,8 +12,5 @@ namespace AITrainerHub.ViewModels
         public PlatformDetailsDto Platform { get; set; } = null!;
         public List<WorkOpportunityDto> RelatedOpportunities { get; set; } = new();
         public PublicReviewRequest ReviewForm { get; set; } = new();
-        public PublicVideoGuideRequest VideoGuideForm { get; set; } = new();
-        public bool IsAuthenticated { get; set; }
-        public string CurrentUserDisplayName { get; set; } = string.Empty;
     }
 }

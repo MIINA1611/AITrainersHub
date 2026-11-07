@@ -13,7 +13,8 @@ namespace AITrainersHub.Domain.Models
         public string PlatformName { get; set; } = string.Empty;
         public string Url { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public string? EmailOfUser { get; set; } // optional - to contact the user if needed
+        public string SubmitterName { get; set; } = string.Empty;
+        public string? EmailOfUser { get; set; } // optional legacy contact field
 
         // اختياري - المستخدم مش لازم يعرف التصنيف بالظبط
         public Guid? CategoryId { get; set; }
@@ -31,19 +32,20 @@ namespace AITrainersHub.Domain.Models
             string platformName,
             string url,
             string description,
-            string? emailOfUser,
+            string submitterName,
             Guid? categoryId)
         {
             PlatformName = platformName;
             Url = url;
             Description = description;
-            EmailOfUser = emailOfUser;
+            SubmitterName = submitterName;
             CategoryId = categoryId;
         }
         public void Update(
             string? platformName,
             string? url,
             string? description,
+            string? submitterName,
             string? emailOfUser,
             Guid? categoryId,
             bool? isReviewed)
@@ -51,6 +53,7 @@ namespace AITrainersHub.Domain.Models
             PlatformName = platformName ?? PlatformName;
             Url = url ?? Url;
             Description = description ?? Description;
+            SubmitterName = submitterName ?? SubmitterName;
             EmailOfUser = emailOfUser ?? EmailOfUser;
             CategoryId = categoryId ?? CategoryId;
             IsReviewed = isReviewed ?? IsReviewed;

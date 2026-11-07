@@ -1,11 +1,10 @@
 @model PlatformDetailsViewModel
 @{
     var platform = Model.Platform;
-    ViewData["Title"] = platform.Name;
+    ViewData["Title"] = $"{platform.Name} — Platform Details";
 
     var averageRating = platform.Reviews.Count > 0 ? platform.Reviews.Average(review => review.Rating) : 0;
     var filledStars = (int)Math.Round(averageRating, MidpointRounding.AwayFromZero);
-    var returnUrl = Context.Request.Path.ToString();
     var platformKey = string.IsNullOrWhiteSpace(platform.Slug) ? platform.Id.ToString() : platform.Slug;
 }
 
@@ -34,7 +33,7 @@
                                 <span class="users-stars" aria-hidden="true">
                                     @for (var star = 1; star <= 5; star++)
                                     {
-                                        @(star <= filledStars ? "★" : "☆")
+                                        @(star <= filledStars ? "\u2605" : "\u2606")
                                     }
                                 </span>
                                 <span class="users-rating__value">@DisplayHelpers.Rating(averageRating)</span>
@@ -256,17 +255,17 @@
                     <div class="admin-card">
                         <div class="admin-card__header">
                             <div>
-                                <h2 class="admin-card__title">Approved video guides</h2>
-                                <p class="admin-card__subtitle">Community walkthroughs that passed moderation.</p>
+                                <h2 class="admin-card__title">Published video guides</h2>
+                                <p class="admin-card__subtitle">Walkthroughs published by the site administrators.</p>
                             </div>
-                            <span class="admin-badge admin-badge--purple">@platform.VideoGuides.Count approved</span>
+                            <span class="admin-badge admin-badge--purple">@platform.VideoGuides.Count published</span>
                         </div>
 
                         <div class="admin-card__body">
                             @if (platform.VideoGuides.Count == 0)
                             {
                                 <div class="users-empty users-empty--inline">
-                                    <p>No approved video guides yet. Be the first to share one.</p>
+                                    <p>No video guides have been published for this platform yet.</p>
                                 </div>
                             }
                             else
@@ -296,106 +295,6 @@
                                         </article>
                                     }
                                 </div>
-                            }
-                        </div>
-                    </div>
-
-                    <div class="admin-card users-detail-section">
-                        <div class="admin-card__header">
-                            <div>
-                                <h2 class="admin-card__title">Share a video guide</h2>
-                                <p class="admin-card__subtitle">Approved guides are published on this page.</p>
-                            </div>
-                        </div>
-
-                        <div class="admin-card__body">
-                            @if (!Model.IsAuthenticated)
-                            {
-                                <div class="users-empty users-empty--inline">
-                                    <p>Sign in with an active account to submit a video guide.</p>
-                                    <a asp-area="Identity"
-                                       asp-page="/Account/Login"
-                                       asp-route-returnUrl="@returnUrl"
-                                       class="admin-btn admin-btn--primary admin-btn--sm">Sign in</a>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="admin-alert admin-alert--info users-form-note">
-                                    Video guides are reviewed by an administrator before they appear publicly.
-                                </div>
-
-                                <form asp-area="Users"
-                                      asp-controller="Platforms"
-                                      asp-action="SubmitVideoGuide"
-                                      method="post"
-                                      class="admin-form"
-                                      data-submit-once>
-                                    <input type="hidden" name="PlatformId" value="@platform.Id" />
-
-                                    <div class="admin-grid admin-grid--2">
-                                        <div class="admin-field">
-                                            <label for="guideTitle" class="admin-label">Video title</label>
-                                            <input id="guideTitle" name="Title" class="admin-input" maxlength="200" required
-                                                   value="@Model.VideoGuideForm.Title" placeholder="e.g. Complete onboarding walkthrough" />
-                                        </div>
-
-                                        <div class="admin-field">
-                                            <label for="guideUrl" class="admin-label">Video URL</label>
-                                            <input id="guideUrl" name="Url" type="url" dir="ltr" class="admin-input" maxlength="500" required
-                                                   value="@Model.VideoGuideForm.Url" placeholder="https://www.youtube.com/watch?v=..." />
-                                        </div>
-
-                                        <div class="admin-field">
-                                            <label for="guideLanguage" class="admin-label">Language</label>
-                                            <select id="guideLanguage" name="Language" class="admin-select">
-                                                @if (Model.VideoGuideForm.Language == GuideLanguage.English)
-                                                {
-                                                    <option value="@((int)GuideLanguage.Arabic)">Arabic</option>
-                                                    <option value="@((int)GuideLanguage.English)" selected>English</option>
-                                                }
-                                                else
-                                                {
-                                                    <option value="@((int)GuideLanguage.Arabic)" selected>Arabic</option>
-                                                    <option value="@((int)GuideLanguage.English)">English</option>
-                                                }
-                                            </select>
-                                        </div>
-
-                                        <div class="admin-field">
-                                            <label for="guideSource" class="admin-label">Source</label>
-                                            <select id="guideSource" name="SourceType" class="admin-select">
-                                                @foreach (var source in new[] { "YouTube", "Vimeo", "Blog", "Other" })
-                                                {
-                                                    if (string.Equals(Model.VideoGuideForm.SourceType, source, StringComparison.OrdinalIgnoreCase))
-                                                    {
-                                                        <option value="@source" selected>@source</option>
-                                                    }
-                                                    else
-                                                    {
-                                                        <option value="@source">@source</option>
-                                                    }
-                                                }
-                                            </select>
-                                        </div>
-
-                                        <div class="admin-field">
-                                            <label for="guideAuthor" class="admin-label">Author or channel</label>
-                                            <input id="guideAuthor" name="AuthorOrChannel" class="admin-input" maxlength="150"
-                                                   value="@Model.VideoGuideForm.AuthorOrChannel" placeholder="Optional" />
-                                        </div>
-
-                                        <div class="admin-field">
-                                            <label for="guidePublished" class="admin-label">Published date</label>
-                                            <input id="guidePublished" name="PublishedAt" type="date" class="admin-input"
-                                                   value="@Model.VideoGuideForm.PublishedAt?.ToString("yyyy-MM-dd")" />
-                                        </div>
-                                    </div>
-
-                                    <div class="admin-actions">
-                                        <button type="submit" class="admin-btn admin-btn--primary">Submit guide for review</button>
-                                    </div>
-                                </form>
                             }
                         </div>
                     </div>
@@ -435,7 +334,7 @@
                                                 <span class="users-stars" aria-label="@review.Rating out of 5 stars">
                                                     @for (var star = 1; star <= 5; star++)
                                                     {
-                                                        @(star <= review.Rating ? "★" : "☆")
+                                                        @(star <= review.Rating ? "\u2605" : "\u2606")
                                                     }
                                                 </span>
                                             </div>
@@ -456,62 +355,53 @@
                         </div>
 
                         <div class="admin-card__body">
-                            @if (!Model.IsAuthenticated)
-                            {
-                                <div class="users-empty users-empty--inline">
-                                    <p>Sign in with an active account to share a review.</p>
-                                    <a asp-area="Identity"
-                                       asp-page="/Account/Login"
-                                       asp-route-returnUrl="@returnUrl"
-                                       class="admin-btn admin-btn--primary admin-btn--sm">Sign in</a>
-                                </div>
-                            }
-                            else
-                            {
-                                <form asp-area="Users"
-                                      asp-controller="Platforms"
-                                      asp-action="SubmitReview"
-                                      method="post"
-                                      class="admin-form"
-                                      data-submit-once>
-                                    <input type="hidden" name="PlatformId" value="@platform.Id" />
+                            <div class="admin-alert admin-alert--info users-form-note">
+                                Reviews are anonymous — just enter the name you want shown. Your review is checked by an administrator before it is published.
+                            </div>
 
-                                    <div class="admin-grid admin-grid--2">
-                                        <div class="admin-field">
-                                            <label for="reviewReviewerName" class="admin-label">Your name</label>
-                                            <input id="reviewReviewerName" name="ReviewerName" class="admin-input" maxlength="100" required
-                                                   value="@Model.ReviewForm.ReviewerName" />
-                                        </div>
+                            <form asp-area="Users"
+                                  asp-controller="Platforms"
+                                  asp-action="SubmitReview"
+                                  method="post"
+                                  class="admin-form"
+                                  data-submit-once>
+                                <input type="hidden" name="PlatformId" value="@platform.Id" />
 
-                                        <div class="admin-field">
-                                            <label for="reviewRating" class="admin-label">Rating</label>
-                                            <select id="reviewRating" name="Rating" class="admin-select">
-                                                @for (var rating = 5; rating >= 1; rating--)
-                                                {
-                                                    if (Model.ReviewForm.Rating == rating)
-                                                    {
-                                                        <option value="@rating" selected>@rating star@(rating == 1 ? "" : "s")</option>
-                                                    }
-                                                    else
-                                                    {
-                                                        <option value="@rating">@rating star@(rating == 1 ? "" : "s")</option>
-                                                    }
-                                                }
-                                            </select>
-                                        </div>
+                                <div class="admin-grid admin-grid--2">
+                                    <div class="admin-field">
+                                        <label for="reviewReviewerName" class="admin-label">Your name</label>
+                                        <input id="reviewReviewerName" name="ReviewerName" class="admin-input" maxlength="100" required
+                                               value="@Model.ReviewForm.ReviewerName" placeholder="e.g. Alex Morgan" autocomplete="name" />
                                     </div>
 
                                     <div class="admin-field">
-                                        <label for="reviewComment" class="admin-label">Your review</label>
-                                        <textarea id="reviewComment" name="Comment" class="admin-textarea" maxlength="1000" required
-                                                  placeholder="What was your experience working with this platform?">@Model.ReviewForm.Comment</textarea>
+                                        <label for="reviewRating" class="admin-label">Rating</label>
+                                        <select id="reviewRating" name="Rating" class="admin-select">
+                                            @for (var rating = 5; rating >= 1; rating--)
+                                            {
+                                                if (Model.ReviewForm.Rating == rating)
+                                                {
+                                                    <option value="@rating" selected>@rating star@(rating == 1 ? "" : "s")</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@rating">@rating star@(rating == 1 ? "" : "s")</option>
+                                                }
+                                            }
+                                        </select>
                                     </div>
+                                </div>
 
-                                    <div class="admin-actions">
-                                        <button type="submit" class="admin-btn admin-btn--primary">Submit review</button>
-                                    </div>
-                                </form>
-                            }
+                                <div class="admin-field">
+                                    <label for="reviewComment" class="admin-label">Your review</label>
+                                    <textarea id="reviewComment" name="Comment" class="admin-textarea" maxlength="1000" required
+                                              placeholder="What was your experience working with this platform?">@Model.ReviewForm.Comment</textarea>
+                                </div>
+
+                                <div class="admin-actions">
+                                    <button type="submit" class="admin-btn admin-btn--primary">Submit review</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </section>

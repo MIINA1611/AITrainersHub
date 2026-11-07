@@ -2,7 +2,7 @@
 @model LoginModel
 
 @{
-    ViewData["Title"] = "Sign in";
+    ViewData["Title"] = "Sign In to Your Account";
     ViewData["AuthOverlay"] = "Welcome back — your next opportunity is waiting.";
 }
 
@@ -61,8 +61,7 @@
     </form>
 
     <p class="text-center text-sm text-gray-400">
-        Don't have an account?
-        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="auth-link">Sign up</a>
+        Accounts are created by an administrator. Contact the site admin if you need access.
     </p>
 </div>
 

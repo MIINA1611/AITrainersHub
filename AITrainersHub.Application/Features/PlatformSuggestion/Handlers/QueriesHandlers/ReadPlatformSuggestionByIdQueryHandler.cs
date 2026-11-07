@@ -27,6 +27,7 @@ namespace AITrainersHub.Application.Features.PlatformSuggestion.Handlers.Queries
                     PlatformName = s.PlatformName,
                     Url = s.Url,
                     Description = s.Description,
+                    SubmitterName = s.SubmitterName,
                     EmailOfUser = s.EmailOfUser,
                     CategoryId = s.CategoryId,
                     IsReviewed = s.IsReviewed,

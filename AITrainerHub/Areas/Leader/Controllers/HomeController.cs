@@ -1,12 +1,15 @@
 using AITrainerHub.ViewModels;
 using AITrainersHub.Application.Features.WorkOpportunity.Queries;
+using AITrainersHub.Domain.Enums;
 using AITrainersHub.Domain.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AITrainerHub.Areas.Leader.Controllers
 {
+    [Authorize(Roles = Helpers.LeaderRole)]
     public class HomeController : LeaderControllerBase
     {
         private readonly IMediator _mediator;

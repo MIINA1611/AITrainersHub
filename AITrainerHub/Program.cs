@@ -2,6 +2,7 @@ using AITrainersHub.Infrastructure;
 using AITrainerHub.Services;
 using huzcodes.Extensions.Exceptions;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Http;
 using AITrainersHub.Application;
 using FluentValidation;
 
@@ -18,6 +19,23 @@ namespace AITrainerHub
 
             builder.AddDbContext();
             builder.AddIdentity();
+
+            // All protected routes, including the whole Admin Area, challenge
+            // anonymous visitors with the real Identity sign-in page. Accounts
+            // that are signed in without the required role land on AccessDenied.
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Identity/Account/Login";
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                options.ReturnUrlParameter = "returnUrl";
+                options.Cookie.Name = "AITrainersHub.Auth";
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SameSite = SameSiteMode.Lax;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                options.ExpireTimeSpan = TimeSpan.FromDays(7);
+                options.SlidingExpiration = true;
+            });
+
             builder.Services.AddSingleton<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, NoOpEmailSender>();
             builder.AddLimiter();
             builder.AddCacheService();        
@@ -53,6 +71,15 @@ namespace AITrainerHub
             app.MapStaticAssets();
 
             app.MapRazorPages();
+
+            // The Admin Area has no Home controller; its entry point is the
+            // dashboard. Mapping it explicitly makes /Admin resolve to
+            // Dashboard/Index, so the inherited authorization redirects
+            // anonymous visitors to the sign-in page instead of returning 404.
+            app.MapAreaControllerRoute(
+                name: "admin",
+                areaName: "Admin",
+                pattern: "Admin/{controller=Dashboard}/{action=Index}/{id?}");
 
             app.MapControllerRoute(
                 name: "areas",

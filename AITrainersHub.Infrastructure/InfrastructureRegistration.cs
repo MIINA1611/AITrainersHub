@@ -45,13 +45,6 @@ namespace AITrainersHub.Infrastructure
             })
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
-
-            builder.Services.ConfigureApplicationCookie(options =>
-            {
-                options.LoginPath = "/Identity/Account/Login";
-                options.LogoutPath = "/Identity/Account/Logout";
-                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-            });
         }
         /// <summary>
         /// Initializes the database by seeding data using the provided service provider.
@@ -65,8 +58,9 @@ namespace AITrainersHub.Infrastructure
             {
                 var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
                 var roleManager = services.GetRequiredService<RoleManager<ApplicationRole>>();
+                var dbContext = services.GetRequiredService<AppDbContext>();
 
-                await DbInitializer.DbInitializer.SeedDataAsync(userManager, roleManager);
+                await DbInitializer.DbInitializer.SeedDataAsync(userManager, roleManager, dbContext);
             }
             catch (Exception ex)
             {
@@ -99,16 +93,6 @@ namespace AITrainersHub.Infrastructure
                         factory: _ => new FixedWindowRateLimiterOptions
                         {
                             PermitLimit = 5,
-                            Window = TimeSpan.FromHours(1),
-                            QueueLimit = 0
-                        }));
-
-                options.AddPolicy("VideoGuidesPolicy", httpContext =>
-                    RateLimitPartition.GetFixedWindowLimiter(
-                        partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
-                        factory: _ => new FixedWindowRateLimiterOptions
-                        {
-                            PermitLimit = 3,
                             Window = TimeSpan.FromHours(1),
                             QueueLimit = 0
                         }));

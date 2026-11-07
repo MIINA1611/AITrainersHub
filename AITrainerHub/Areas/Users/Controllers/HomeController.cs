@@ -1,7 +1,6 @@
 using AITrainerHub.ViewModels;
 using AITrainersHub.Application.Features.Categories.Queries;
 using AITrainersHub.Application.Features.Platform.Queries;
-using AITrainersHub.Application.Features.WorkOpportunity.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using PlatformStatus = AITrainersHub.Domain.Enums.PlatfromStatus.PlatformStatus;
@@ -19,12 +18,9 @@ namespace AITrainerHub.Areas.Users.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(CancellationToken cancellationToken)
+        public async Task<IActionResult> Index(CancellationToken cancellationToken = default)
         {
             var platforms = await _mediator.Send(new ReadPlatformsQuery(), cancellationToken);
-            var opportunities = await _mediator.Send(
-                new ReadWorkOpportunitiesQuery(null, true, true),
-                cancellationToken);
             var categories = await _mediator.Send(new ReadCategoriesQuery(), cancellationToken);
 
             var featured = platforms
@@ -43,21 +39,13 @@ namespace AITrainerHub.Areas.Users.Controllers
                     .ToList();
             }
 
-            var categoryCounts = platforms
-                .SelectMany(platform => platform.Categories)
-                .GroupBy(category => category.CategoryId)
-                .ToDictionary(group => group.Key, group => group.Count());
-
-            ViewData["Title"] = "Discover AI Training Platforms";
+            ViewData["Title"] = "AI Trainers Hub — Verified Directory & Opportunities for AI Trainers";
 
             return View(new PublicHomeViewModel
             {
                 FeaturedPlatforms = featured,
-                LatestOpportunities = opportunities.Take(3).ToList(),
                 Categories = categories,
-                CategoryCounts = categoryCounts,
-                TotalPlatforms = platforms.Count,
-                TotalOpportunities = opportunities.Count
+                TotalPlatforms = platforms.Count
             });
         }
 

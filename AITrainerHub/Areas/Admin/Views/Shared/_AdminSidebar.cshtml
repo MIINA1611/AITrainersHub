@@ -1,6 +1,3 @@
-@using Microsoft.AspNetCore.Identity
-@using AITrainersHub.Domain.Models
-@inject SignInManager<ApplicationUser> SignInManager
 @{
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
 
@@ -13,11 +10,11 @@
     var isReferenceActive = IsActive("Categories", "ReferenceData");
     var isAdvertisementsActive = IsActive("Advertisements");
     var isLeadersActive = IsActive("Leaders");
+    var isAdminsActive = IsActive("Admins");
 
     var pendingTotal = ViewData["PendingTotal"] is int total ? total : 0;
 
-    var displayName = ViewData["AdminDisplayName"] as string ?? "Guest";
-    var email = ViewData["AdminEmail"] as string ?? string.Empty;
+    var displayName = ViewData["AdminDisplayName"] as string ?? "Administrator";
 
     string LinkClass(bool active) => active
         ? "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors bg-white text-black"
@@ -93,35 +90,31 @@
             </svg>
             Leaders
         </a>
+
+        <a asp-area="Admin" asp-controller="Admins" asp-action="Index" class="@LinkClass(isAdminsActive)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
+                <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path>
+                <path d="M9 12h6"></path>
+                <path d="M12 9v6"></path>
+            </svg>
+            Admins
+        </a>
     </nav>
 
     <div class="p-3 border-t border-white/5">
         <div class="text-sm">
             <p class="font-medium text-white">@displayName</p>
-            @if (!string.IsNullOrWhiteSpace(email))
-            {
-                <p class="text-xs text-gray-500">@email</p>
-            }
         </div>
 
-        @if (SignInManager.IsSignedIn(User))
-        {
-            <form method="post" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Dashboard", new { area = "Admin" })">
-                <button type="submit" class="@GhostButtonClass">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-2" aria-hidden="true">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                        <polyline points="16 17 21 12 16 7"></polyline>
-                        <line x1="21" x2="9" y1="12" y2="12"></line>
-                    </svg>
-                    Sign out
-                </button>
-            </form>
-        }
-        else
-        {
-            <a asp-area="Identity" asp-page="/Account/Login" class="@GhostButtonClass">
-                Sign in
-            </a>
-        }
+        <form method="post" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Dashboard", new { area = "Admin" })">
+            <button type="submit" class="@GhostButtonClass">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-2" aria-hidden="true">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" x2="9" y1="12" y2="12"></line>
+                </svg>
+                Sign out
+            </button>
+        </form>
     </div>
 </div>

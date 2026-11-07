@@ -13,8 +13,7 @@ using PlatformStatus = AITrainersHub.Domain.Enums.PlatfromStatus.PlatformStatus;
 
 namespace AITrainerHub.Area.Admin.Controllers
 {
-    [Area("Admin")]
-    public class DashboardController : Controller
+    public class DashboardController : AdminBaseController
     {
         private readonly IMediator _mediator;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -50,7 +49,7 @@ namespace AITrainerHub.Area.Admin.Controllers
                 new ReadPlatformsQuery(),
                 cancellationToken);
 
-            var leaders = await _userManager.GetUsersInRoleAsync(Helpers.LeaderRole);
+            var leaders = await _userManager.GetUsersInRoleAsync(AITrainersHub.Domain.Enums.Helpers.LeaderRole);
 
             var model = new DashboardViewModel
             {
@@ -62,7 +61,7 @@ namespace AITrainerHub.Area.Admin.Controllers
                 TotalLivePlatforms = platforms.Count(platform => platform.Status == PlatformStatus.Open)
             };
 
-            ViewData["Title"] = "Overview";
+            ViewData["Title"] = "Admin Overview";
             return View(model);
         }
     }

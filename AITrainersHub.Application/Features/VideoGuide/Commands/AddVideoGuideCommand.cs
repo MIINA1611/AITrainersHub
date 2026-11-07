@@ -18,6 +18,12 @@ namespace AITrainersHub.Application.Features.VideoGuide.Commands
         public string? AuthorOrChannel { get; set; }
         public DateTime? PublishedAt { get; set; }
 
+        /// <summary>
+        /// Admin-created guides are published immediately. The default keeps the
+        /// historical pending behaviour for any future non-admin caller.
+        /// </summary>
+        public bool IsApproved { get; set; } = true;
+
         public HashSet<string> CacheKeySet { get; } = new();
         public IEnumerable<string> CacheKeys => CacheKeySet;
 
@@ -32,7 +38,8 @@ namespace AITrainersHub.Application.Features.VideoGuide.Commands
             string url,
             string sourceType,
             string? authorOrChannel,
-            DateTime? publishedAt)
+            DateTime? publishedAt,
+            bool isApproved = true)
         {
             PlatformId = platformId;
             Title = title;
@@ -41,6 +48,7 @@ namespace AITrainersHub.Application.Features.VideoGuide.Commands
             SourceType = sourceType;
             AuthorOrChannel = authorOrChannel;
             PublishedAt = publishedAt;
+            IsApproved = isApproved;
         }
     }
 }

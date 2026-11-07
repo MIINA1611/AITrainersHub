@@ -10,5 +10,7 @@ namespace AITrainerHub.ViewModels
     {
         public PlatformSuggestionRequest Form { get; set; } = new();
         public List<CategoryListResponse> Categories { get; set; } = new();
+        public bool Submitted { get; set; }
+        public string? SubmittedName { get; set; }
     }
 }

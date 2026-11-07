@@ -173,7 +173,11 @@
                             <tr>
                                 <td>
                                     <span class="admin-cell-title">@suggestion.PlatformName</span>
-                                    @if (!string.IsNullOrWhiteSpace(suggestion.EmailOfUser))
+                                    @if (!string.IsNullOrWhiteSpace(suggestion.SubmitterName))
+                                    {
+                                        <span class="admin-cell-sub">by @suggestion.SubmitterName</span>
+                                    }
+                                    else if (!string.IsNullOrWhiteSpace(suggestion.EmailOfUser))
                                     {
                                         <span class="admin-cell-sub">@suggestion.EmailOfUser</span>
                                     }

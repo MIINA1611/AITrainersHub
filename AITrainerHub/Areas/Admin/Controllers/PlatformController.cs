@@ -19,6 +19,7 @@ using AITrainersHub.Application.Features.Review.Commands;
 using AITrainersHub.Application.Features.Review.Queries;
 using AITrainersHub.Application.Features.VideoGuide.Commands;
 using AITrainersHub.Application.Features.VideoGuide.Queries;
+using AITrainersHub.Domain.Enums;
 using FluentValidation;
 using huzcodes.Extensions.Exceptions;
 using MediatR;
@@ -27,8 +28,7 @@ using PlatformStatus = AITrainersHub.Domain.Enums.PlatfromStatus.PlatformStatus;
 
 namespace AITrainerHub.Area.Admin.Controllers
 {
-    [Area("Admin")]
-    public class PlatformController : Controller
+    public class PlatformController : AdminBaseController
     {
         private const int PageSize = 10;
 
@@ -109,7 +109,7 @@ namespace AITrainerHub.Area.Admin.Controllers
                 });
             }
 
-            ViewData["Title"] = "Platforms";
+            ViewData["Title"] = "Manage Platforms";
 
             return View(new PlatformsIndexViewModel
             {
@@ -636,7 +636,8 @@ namespace AITrainerHub.Area.Admin.Controllers
                             Url = request.Url.Trim(),
                             SourceType = request.SourceType.Trim(),
                             AuthorOrChannel = NormalizeOptional(request.AuthorOrChannel),
-                            PublishedAt = request.PublishedAt
+                            PublishedAt = request.PublishedAt,
+                            IsApproved = true
                         },
                         cancellationToken);
                 }

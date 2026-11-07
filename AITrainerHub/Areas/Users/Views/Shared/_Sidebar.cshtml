@@ -89,7 +89,7 @@
             {
                 <div class="px-3 py-2 text-xs text-gray-500 truncate">@displayName</div>
                 <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "Users" })" method="post">
-                    <button type="submit" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 text-right">
+                    <button type="submit" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 text-left">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                             <polyline points="16 17 21 12 16 7"></polyline>
@@ -107,15 +107,6 @@
                         <circle cx="12" cy="7" r="4"></circle>
                     </svg>
                     Sign in
-                </a>
-                <a asp-area="Identity" asp-page="/Account/Register" class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <line x1="19" x2="19" y1="8" y2="14"></line>
-                        <line x1="22" x2="16" y1="11" y2="11"></line>
-                    </svg>
-                    Create account
                 </a>
             }
         </nav>

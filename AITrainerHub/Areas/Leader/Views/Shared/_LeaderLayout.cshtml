@@ -9,12 +9,16 @@
     ViewData["LeaderDisplayName"] = displayName;
     ViewData["LeaderEmail"] = email;
 }
+@using AITrainerHub.Presentation
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - AITrainerHub Leader</title>
+    <title>@Branding.DocumentTitle(ViewData["Title"] as string ?? "Leader Dashboard")</title>
+    <meta name="theme-color" content="#0b0618" />
+    <link rel="icon" type="image/svg+xml" href="~/favicon.svg" asp-append-version="true" />
+    <link rel="shortcut icon" type="image/svg+xml" href="~/favicon.svg" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin-custom.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/users.css" asp-append-version="true" />

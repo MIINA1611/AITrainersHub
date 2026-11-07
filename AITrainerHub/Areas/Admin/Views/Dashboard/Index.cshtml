@@ -1,6 +1,6 @@
 @model DashboardViewModel
 @{
-    ViewData["Title"] = "Overview";
+    ViewData["Title"] = "Admin Overview";
 }
 
 <div class="admin-page-header">
@@ -10,6 +10,9 @@
     </div>
 
     <div class="admin-page-actions">
+        <a asp-area="Admin" asp-controller="Admins" asp-action="Create" class="admin-btn admin-btn--primary">
+            Create Admin
+        </a>
         <a asp-area="Admin" asp-controller="Moderation" asp-action="Index" class="admin-btn admin-btn--ghost">
             Open Moderation Queue
         </a>

@@ -13,7 +13,8 @@ using VideoGuideEntity = AITrainersHub.Domain.Models.VideoGuide;
 namespace AITrainersHub.Application.Features.VideoGuide.Handlers.CommandsHandlers
 {
     /// <summary>
-    /// Handles the AddVideoGuideCommand and persists a new pending video guide.
+    /// Handles the AddVideoGuideCommand and persists a new video guide.
+    /// Admin-created guides are marked as approved immediately.
     /// </summary>
     public class AddVideoGuideCommandHandler(IAITrainerHubDbContext context)
         : IRequestHandler<AddVideoGuideCommand, VideoGuideDto>
@@ -38,7 +39,10 @@ namespace AITrainersHub.Application.Features.VideoGuide.Handlers.CommandsHandler
                 request.Url,
                 request.SourceType,
                 request.AuthorOrChannel,
-                request.PublishedAt);
+                request.PublishedAt)
+            {
+                IsApproved = request.IsApproved
+            };
 
             await context.VideoGuides.AddAsync(videoGuide, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
